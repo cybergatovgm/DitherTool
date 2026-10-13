@@ -13,8 +13,8 @@ No installation or build step is needed for the browser version. Styles, fonts, 
 1. Download the repository, or clone it:
 
    ```bash
-   git clone https://codeberg.org/cybergato/Dither.tool.git
-   cd Dither.tool
+   git clone https://github.com/cybergatovgm/DitherTool/.git
+   cd DitherTool
    ```
 
 2. Open [public/Bitmaptool.html](public/Bitmaptool.html) in a modern browser, such as Chrome, Firefox, Safari, or Edge.

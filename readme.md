@@ -10,7 +10,7 @@ The interface uses HTML, JavaScript, [Tailwind CSS](https://tailwindcss.com/), [
 
 Its available for download on itch.io, completely for free.
 
-[Dither.tool](https://cyber-gato.itch.io/dithertool))
+[Dither.tool](https://cyber-gato.itch.io/dithertool)
 
 ## Use it in your browser
 

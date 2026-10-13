@@ -6,6 +6,12 @@ The interface uses HTML, JavaScript, [Tailwind CSS](https://tailwindcss.com/), [
 
 ![Dither.tool preview](Media/b.png)
 
+## Where can I find premade builds/releases of this tool?
+
+Its available for download on itch.io, completely for free.
+
+[Dither.tool](https://cyber-gato.itch.io/dithertool))
+
 ## Use it in your browser
 
 No installation or build step is needed for the browser version. Styles, fonts, icons, and media-processing libraries load from the bundled `public/assets` files, so the editor works offline; optional Lospec palette loading requires a network connection.

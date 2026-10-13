@@ -1,0 +1,3124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <title>Dither.tool</title>
+    <style>
+        #theme-switcher,
+        #language-switcher {
+            position: static;
+            font: 12px Inter, sans-serif;
+            padding: 4px 6px;
+            border: 1px solid #999;
+            background: #fff;
+            border-radius: 6px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            width: max-content;
+            margin: 24px 0 0 auto;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+        #language-switcher {
+            margin-top: 8px;
+        }
+        #theme-switcher select,
+        #language-switcher select {
+            appearance: auto;
+            background: #fff;
+            color: #111827;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font: inherit;
+        }
+
+        html[data-theme="dark"] body {
+            background: #111318 !important;
+            color: #e5e7eb !important;
+        }
+        html[data-theme="dark"] body :is(h3, span, label, button, input, select) {
+            color: #e5e7eb !important;
+        }
+        html[data-theme="dark"] header,
+        html[data-theme="dark"] aside {
+            background: #1b1e25 !important;
+            border-color: #303541 !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,.22) !important;
+        }
+        html[data-theme="dark"] body > div:first-child > #workspace-content,
+        html[data-theme="dark"] #algorithm-ribbon {
+            background: #111318 !important;
+        }
+        html[data-theme="dark"] header > div:first-child > div,
+        html[data-theme="dark"] #algorithm-list > div,
+        html[data-theme="dark"] #shape-grid button,
+        html[data-theme="dark"] aside button:not(#add-color-button) {
+            background: #242832 !important;
+            border-color: #383e4b !important;
+        }
+        html[data-theme="dark"] #algorithm-list > div.border-gray-900,
+        html[data-theme="dark"] #shape-grid button.border-gray-900 {
+            background: #263753 !important;
+            border-color: #5790ff !important;
+        }
+        html[data-theme="dark"] #canvas-container {
+            background-color: #181b21 !important;
+            background-image: radial-gradient(#343a46 0.8px, transparent 0.8px);
+            border-color: #343a46 !important;
+            box-shadow: 0 16px 36px rgba(0,0,0,.28) !important;
+        }
+        html[data-theme="dark"] button,
+        html[data-theme="dark"] select,
+        html[data-theme="dark"] input:not([type=range]):not([type=checkbox]) {
+            background-color: #242832 !important;
+            border-color: #414754 !important;
+        }
+        html[data-theme="dark"] #upload-image-button,
+        html[data-theme="dark"] button.bg-gray-900 {
+            background: #2563eb !important;
+            border-color: #3b82f6 !important;
+            color: #fff !important;
+        }
+        html[data-theme="dark"] #add-color-button {
+            background: transparent !important;
+            border-color: #555d6c !important;
+        }
+        html[data-theme="dark"] input[type=range]::-webkit-slider-runnable-track { background: #687386; height: 4px; }
+        html[data-theme="dark"] input[type=range]::-webkit-slider-thumb { background: #fff; height: 14px; width: 14px; margin-top: -5px; box-shadow: 0 0 0 2px #1b1e25, 0 0 0 4px #60a5fa; }
+        html[data-theme="dark"] input[type=range]::-moz-range-track { background: #687386; height: 4px; }
+        html[data-theme="dark"] input[type=range]::-moz-range-thumb { background: #fff; height: 14px; width: 14px; border: 0; box-shadow: 0 0 0 2px #1b1e25, 0 0 0 4px #60a5fa; }
+        html[data-theme="dark"] input[type=range]:focus-visible { outline: 2px solid #93c5fd; outline-offset: 4px; }
+        html[data-theme="dark"] #theme-switcher,
+        html[data-theme="dark"] #language-switcher {
+            background: #1b1e25;
+            border-color: #414754;
+            color: #e5e7eb;
+        }
+        html[data-theme="dark"] :is(#theme-switcher, #language-switcher) select { background: #242832; color: #e5e7eb; border-color: #414754; }
+        html[data-theme="bw"] body {
+            background: #fff !important;
+            color: #000 !important;
+        }
+        html[data-theme="bw"] body * {
+            color: #000 !important;
+            box-shadow: none !important;
+        }
+        html[data-theme="bw"] header,
+        html[data-theme="bw"] aside {
+            background: #fff !important;
+            border: 2px solid #000 !important;
+            border-radius: 0 !important;
+            box-shadow: 4px 4px #000 !important;
+        }
+        html[data-theme="bw"] body > div:first-child > #workspace-content,
+        html[data-theme="bw"] #algorithm-ribbon,
+        html[data-theme="bw"] header > div:first-child > div,
+        html[data-theme="bw"] #algorithm-list > div,
+        html[data-theme="bw"] #shape-grid button,
+        html[data-theme="bw"] aside button:not(#add-color-button) {
+            background: #fff !important;
+            border-color: #000 !important;
+            border-radius: 0 !important;
+        }
+        html[data-theme="bw"] #algorithm-list > div.border-gray-900,
+        html[data-theme="bw"] #algorithm-list > div.border-gray-900 *,
+        html[data-theme="bw"] #shape-grid button.border-gray-900,
+        html[data-theme="bw"] #shape-grid button.border-gray-900 * {
+            background: #000 !important;
+            border-color: #000 !important;
+            color: #fff !important;
+        }
+        html[data-theme="bw"] #canvas-container {
+            background-color: #fff !important;
+            background-image: radial-gradient(#000 0.8px, transparent 0.8px) !important;
+            border: 2px solid #000 !important;
+            border-radius: 0 !important;
+            box-shadow: 4px 4px #000 !important;
+        }
+        html[data-theme="bw"] button,
+        html[data-theme="bw"] select,
+        html[data-theme="bw"] input:not([type=range]):not([type=checkbox]) {
+            background: #fff !important;
+            border: 1px solid #000 !important;
+            border-radius: 0 !important;
+        }
+        html[data-theme="bw"] #upload-image-button,
+        html[data-theme="bw"] button.bg-gray-900 {
+            background: #000 !important;
+            border-color: #000 !important;
+            color: #fff !important;
+        }
+        html[data-theme="bw"] #add-color-button {
+            background: #fff !important;
+            border: 1px solid #000 !important;
+            border-radius: 0 !important;
+        }
+        html[data-theme="bw"] input[type=range]::-webkit-slider-runnable-track { background: #000; height: 2px; }
+        html[data-theme="bw"] input[type=range]::-webkit-slider-thumb { background: #fff; height: 14px; width: 14px; margin-top: -6px; box-shadow: 0 0 0 2px #000 !important; }
+        html[data-theme="bw"] input[type=range]::-moz-range-track { background: #000; height: 2px; }
+        html[data-theme="bw"] input[type=range]::-moz-range-thumb { background: #fff; height: 14px; width: 14px; border: 2px solid #000; }
+        html[data-theme="bw"] input[type=range]:focus-visible,
+        html[data-theme="bw"] button:focus-visible,
+        html[data-theme="bw"] select:focus-visible {
+            outline: 2px solid #000 !important;
+            outline-offset: 3px;
+        }
+        html[data-theme="bw"] #theme-switcher,
+        html[data-theme="bw"] #language-switcher {
+            background: #fff !important;
+            color: #000 !important;
+            border: 1px solid #000 !important;
+            border-radius: 0 !important;
+            box-shadow: 2px 2px #000 !important;
+        }
+        html[data-theme="bw"] :is(#theme-switcher, #language-switcher) select {
+            background: #fff !important;
+            color: #000 !important;
+            border-color: #000 !important;
+        }
+        html[data-theme="wb"] body {
+            background: #000 !important;
+            color: #fff !important;
+        }
+        html[data-theme="wb"] body * {
+            color: #fff !important;
+            box-shadow: none !important;
+        }
+        html[data-theme="wb"] header,
+        html[data-theme="wb"] aside {
+            background: #000 !important;
+            border: 2px solid #fff !important;
+            border-radius: 0 !important;
+            box-shadow: 4px 4px #fff !important;
+        }
+        html[data-theme="wb"] body > div:first-child > #workspace-content,
+        html[data-theme="wb"] #algorithm-ribbon,
+        html[data-theme="wb"] header > div:first-child > div,
+        html[data-theme="wb"] #algorithm-list > div,
+        html[data-theme="wb"] #shape-grid button,
+        html[data-theme="wb"] aside button:not(#add-color-button) {
+            background: #000 !important;
+            border-color: #fff !important;
+            border-radius: 0 !important;
+        }
+        html[data-theme="wb"] #algorithm-list > div:not(.border-gray-900) svg {
+            stroke: #fff;
+        }
+        html[data-theme="wb"] #algorithm-list > div:not(.border-gray-900) svg path[fill="black"] {
+            fill: #fff;
+        }
+        html[data-theme="wb"] #algorithm-list > div:not(.border-gray-900) .dither-floyd,
+        html[data-theme="wb"] #algorithm-list > div:not(.border-gray-900) .dither-atkinson,
+        html[data-theme="wb"] #algorithm-list > div:not(.border-gray-900) .dither-bayer,
+        html[data-theme="wb"] #algorithm-list > div:not(.border-gray-900) .dither-noise {
+            filter: invert(1);
+        }
+        html[data-theme="wb"] #algorithm-ribbon > div:has(#algorithm-scroll-left),
+        html[data-theme="wb"] #algorithm-ribbon > div:has(#algorithm-scroll-right) {
+            background: transparent !important;
+            background-image: none !important;
+        }
+        html[data-theme="wb"] #algorithm-list > div.border-gray-900,
+        html[data-theme="wb"] #algorithm-list > div.border-gray-900 *,
+        html[data-theme="wb"] #shape-grid button.border-gray-900,
+        html[data-theme="wb"] #shape-grid button.border-gray-900 * {
+            background: #fff !important;
+            border-color: #fff !important;
+            color: #000 !important;
+        }
+        html[data-theme="wb"] #canvas-container {
+            background-color: #000 !important;
+            background-image: radial-gradient(#fff 0.8px, transparent 0.8px) !important;
+            border: 2px solid #fff !important;
+            border-radius: 0 !important;
+            box-shadow: 4px 4px #fff !important;
+        }
+        html[data-theme="wb"] button,
+        html[data-theme="wb"] select,
+        html[data-theme="wb"] input:not([type=range]):not([type=checkbox]) {
+            background: #000 !important;
+            border: 1px solid #fff !important;
+            border-radius: 0 !important;
+        }
+        html[data-theme="wb"] #upload-image-button,
+        html[data-theme="wb"] button.bg-gray-900 {
+            background: #fff !important;
+            border-color: #fff !important;
+            color: #000 !important;
+        }
+        html[data-theme="wb"] #add-color-button {
+            background: #000 !important;
+            border: 1px solid #fff !important;
+            border-radius: 0 !important;
+        }
+        html[data-theme="wb"] input[type=range]::-webkit-slider-runnable-track { background: #fff; height: 2px; }
+        html[data-theme="wb"] input[type=range]::-webkit-slider-thumb { background: #000; height: 14px; width: 14px; margin-top: -6px; box-shadow: 0 0 0 2px #fff !important; }
+        html[data-theme="wb"] input[type=range]::-moz-range-track { background: #fff; height: 2px; }
+        html[data-theme="wb"] input[type=range]::-moz-range-thumb { background: #000; height: 14px; width: 14px; border: 2px solid #fff; }
+        html[data-theme="wb"] input[type=range]:focus-visible,
+        html[data-theme="wb"] button:focus-visible,
+        html[data-theme="wb"] select:focus-visible {
+            outline: 2px solid #fff !important;
+            outline-offset: 3px;
+        }
+        html[data-theme="wb"] #theme-switcher,
+        html[data-theme="wb"] #language-switcher {
+            background: #000 !important;
+            color: #fff !important;
+            border: 1px solid #fff !important;
+            border-radius: 0 !important;
+            box-shadow: 2px 2px #fff !important;
+        }
+        html[data-theme="wb"] :is(#theme-switcher, #language-switcher) select {
+            background: #000 !important;
+            color: #fff !important;
+            border-color: #fff !important;
+        }
+    </style>
+    <script>
+        (function () {
+            var validThemes = ['bw', 'wb', 'clean', 'dark'];
+            var getSavedTheme = function () {
+                try {
+                    var saved = localStorage.getItem('bt-theme');
+                    if (saved === 'default') return 'clean';
+                    return validThemes.indexOf(saved) >= 0 ? saved : 'bw';
+                } catch (error) {
+                    return 'bw';
+                }
+            };
+            var applyTheme = function (theme) {
+                var safeTheme = validThemes.indexOf(theme) >= 0 ? theme : 'bw';
+                if (safeTheme === 'clean') {
+                    delete document.documentElement.dataset.theme;
+                } else {
+                    document.documentElement.dataset.theme = safeTheme;
+                }
+                var selector = document.getElementById('theme-selector');
+                if (selector) selector.value = safeTheme;
+            };
+
+            var saved = getSavedTheme();
+            applyTheme(saved);
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var w = document.createElement('label');
+                w.id = 'theme-switcher';
+                w.innerHTML = '<span data-i18n="theme.label">Theme</span> <select id="theme-selector"><option value="bw" data-i18n="theme.bw">1-bit B&amp;W</option><option value="wb" data-i18n="theme.wb">1-bit W&amp;B</option><option value="clean" data-i18n="theme.clean">Clean</option><option value="dark" data-i18n="theme.dark">Dark clean</option></select>';
+                var s = w.querySelector('select');
+                s.value = saved;
+                s.addEventListener('change', function () {
+                    var theme = s.value;
+                    applyTheme(theme);
+                    try {
+                        localStorage.setItem('bt-theme', theme);
+                    } catch (error) {}
+                });
+                var sidebarContent = document.querySelector('aside > div');
+                (sidebarContent || document.body).appendChild(w);
+            });
+        })();
+    </script>
+    <script>
+        const I18N = {
+            en: {
+                'header.fit': 'Fit',
+                'header.compare': 'Compare',
+                'header.upload': 'Upload image or video',
+                'header.play': 'Play preview',
+                'header.pause': 'Pause preview',
+                'header.grid': '{w} × {h} px grid',
+                'app.version': 'Version {version}',
+                'algo.region': 'Dithering algorithms',
+                'algo.scrollPrev': 'Scroll algorithms back',
+                'algo.scrollNext': 'Scroll algorithms forward',
+                'algo.name.Sierra 2-row': 'Sierra 2-row',
+                'algo.name.Blue noise': 'Blue noise',
+                'algo.name.Halftone': 'Halftone',
+                'algo.name.Threshold': 'Threshold',
+                'algo.desc.Floyd': 'Diffuses each pixel’s full quantization error to four neighbors.',
+                'algo.desc.Atkinson': 'Diffuses six eighths of the error for a crisp, high-contrast result.',
+                'algo.desc.Jarvis': 'Spreads error across twelve neighbors and two rows for softer tones.',
+                'algo.desc.Stucki': 'A twelve-neighbor, two-row kernel with a slightly sharper texture than Jarvis.',
+                'algo.desc.Burkes': 'A seven-neighbor kernel between Floyd and the larger two-row methods.',
+                'algo.desc.Sierra': 'A ten-neighbor kernel that spreads error over two rows.',
+                'algo.desc.Sierra 2-row': 'A lighter seven-neighbor version of Sierra.',
+                'algo.desc.Sierra lite': 'A fast three-neighbor kernel that diffuses all of the error.',
+                'algo.desc.Bayer 2×2': 'A tiled 2×2 Bayer threshold pattern with five possible tones.',
+                'algo.desc.Bayer 4×4': 'A tiled 4×4 Bayer threshold pattern with seventeen possible tones.',
+                'algo.desc.Bayer 8×8': 'A tiled 8×8 Bayer threshold pattern with sixty-five possible tones.',
+                'algo.desc.Bayer 16×16': 'A tiled 16×16 Bayer threshold pattern with a fine, repeating grid.',
+                'algo.desc.Blue noise': 'A stable, evenly spaced ordered threshold pattern without a regular Bayer grid.',
+                'algo.desc.Halftone': 'An ordered clustered-dot screen that grows from the center of each cell.',
+                'algo.desc.Threshold': 'A single fixed cutoff with no dithering; mid-tones are not preserved.',
+                'canvas.label': 'Dithered image',
+                'canvas.original': 'Original',
+                'section.adjust': 'Adjust',
+                'adjust.pixelSize': 'Pixel size',
+                'adjust.brightness': 'Brightness',
+                'animation.timeline': 'Animation timeline',
+                'animation.position': 'Timeline position',
+                'animation.pixelSize': 'Pixel size keyframes',
+                'animation.brightness': 'Brightness keyframes',
+                'animation.contrast': 'Contrast keyframes',
+                'animation.midpoint': 'Midpoint keyframes',
+                'animation.addKeyframe': 'Add or update keyframe',
+                'animation.time': '{current} / {duration}',
+                'adjust.contrast': 'Contrast',
+                'adjust.midpoint': 'Midpoint',
+                'section.colors': 'Colors',
+                'colors.ink': 'Ink',
+                'colors.paper': 'Paper',
+                'colors.inkHex': 'Ink hex',
+                'colors.paperHex': 'Paper hex',
+                'colors.inkPicker': 'Ink color',
+                'colors.paperPicker': 'Paper color',
+                'colors.transparent': 'Transparent paper',
+                'colors.add': '+ Add color',
+                'colors.maxSize': 'Maximum palette size',
+                'colors.maxSizeValue': 'Up to {n} colors',
+                'settings.reset': 'Reset to defaults',
+                'palette.lospecInput': 'Lospec palette URL or slug',
+                'palette.lospecBrowse': 'Browse palettes on Lospec',
+                'palette.lospecLoad': 'Load from Lospec',
+                'palette.lospecLoading': 'Loading palette…',
+                'palette.lospecLoaded': 'Loaded {name} ({n} colors)',
+                'palette.lospecInvalidInput': 'Enter a Lospec palette URL or slug.',
+                'palette.lospecNotFound': 'Palette not found on Lospec.',
+                'palette.lospecInvalid': 'Lospec returned invalid palette data.',
+                'palette.lospecTooMany': 'This palette has {n} colors. The maximum supported is 32.',
+                'palette.lospecFailed': 'Could not load the palette from Lospec. Check your connection and try again.',
+                'colors.extra': 'Color {n}',
+                'colors.extraAria': 'Palette color {n}',
+                'colors.remove': 'Remove',
+                'colors.removeAria': 'Remove palette color {n}',
+                'palette.title': '{n}-color palette',
+                'palette.apply': 'Apply {n}-color palette',
+                'section.download': 'Download',
+                'download.upscale': 'Upscale',
+                'download.copyHtml': 'Copy HTML code',
+                'download.htmlCopied': 'HTML copied!',
+                'download.svg': 'Download SVG',
+                'download.png': 'Download PNG',
+                'download.gif': 'Download GIF',
+                'download.gifDuration': 'GIF duration (seconds)',
+                'download.gifDurationHint': 'Trim from the start; shorter animations keep their original length.',
+                'download.gifLimits': 'GIF exports: up to 15 seconds, 10 fps, 480 px wide.',
+                'download.gifProgress': 'Encoding GIF frame {current} of {total}…',
+                'download.gifFailed': 'Could not export GIF. Try a smaller or shorter animation.',
+                'download.gifReady': 'GIF downloaded.',
+                'download.clipboard': 'Copy to clipboard',
+                'download.copied': 'Copied!',
+                'download.copyFailed': 'Copy failed',
+                'download.imgAlt': 'Dithered bitmap',
+                'settings.fewer': 'Fewer settings',
+                'settings.more': 'More settings',
+                'settings.extendedPixel': 'Extended pixel size (max 100)',
+                'status.loading': 'Loading image…',
+                'status.processFailed': 'Unable to process image. Try uploading a local bitmap.',
+                'status.loadFailed': 'Could not load image. Upload a supported bitmap.',
+                'status.notImage': 'Choose an image file.',
+                'status.mediaLoadFailed': 'Could not load this GIF or video. Try another file.',
+                'status.mediaUnsupported': 'This video format is not supported by your browser.',
+                'status.playBlocked': 'Preview playback was blocked. Use Play preview to start it.',
+                'theme.label': 'Theme',
+                'theme.bw': '1-bit B&W',
+                'theme.wb': '1-bit W&B',
+                'theme.clean': 'Clean',
+                'theme.dark': 'Dark clean',
+                'language.label': 'Language'
+            },
+            'pt-BR': {
+                'header.fit': 'Ajustar',
+                'header.compare': 'Comparar',
+                'header.upload': 'Carregar imagem ou vídeo',
+                'header.play': 'Reproduzir prévia',
+                'header.pause': 'Pausar prévia',
+                'header.grid': 'Grade de {w} × {h} px',
+                'app.version': 'Versão {version}',
+                'algo.region': 'Algoritmos de pontilhamento',
+                'algo.scrollPrev': 'Rolar algoritmos para trás',
+                'algo.scrollNext': 'Rolar algoritmos para frente',
+                'algo.name.Sierra 2-row': 'Sierra 2 linhas',
+                'algo.name.Blue noise': 'Ruído azul',
+                'algo.name.Halftone': 'Meio-tom',
+                'algo.name.Threshold': 'Limiar',
+                'algo.desc.Floyd': 'Difunde todo o erro de quantização de cada pixel para quatro vizinhos.',
+                'algo.desc.Atkinson': 'Difunde seis oitavos do erro para um resultado nítido e de alto contraste.',
+                'algo.desc.Jarvis': 'Espalha o erro por doze vizinhos em duas linhas para tons mais suaves.',
+                'algo.desc.Stucki': 'Um núcleo de doze vizinhos em duas linhas, com textura um pouco mais nítida que o Jarvis.',
+                'algo.desc.Burkes': 'Um núcleo de sete vizinhos, entre o Floyd e os métodos maiores de duas linhas.',
+                'algo.desc.Sierra': 'Um núcleo de dez vizinhos que espalha o erro por duas linhas.',
+                'algo.desc.Sierra 2-row': 'Uma versão mais leve do Sierra, com sete vizinhos.',
+                'algo.desc.Sierra lite': 'Um núcleo rápido de três vizinhos que difunde todo o erro.',
+                'algo.desc.Bayer 2×2': 'Um padrão de limiar Bayer 2×2 repetido, com cinco tons possíveis.',
+                'algo.desc.Bayer 4×4': 'Um padrão de limiar Bayer 4×4 repetido, com dezessete tons possíveis.',
+                'algo.desc.Bayer 8×8': 'Um padrão de limiar Bayer 8×8 repetido, com sessenta e cinco tons possíveis.',
+                'algo.desc.Bayer 16×16': 'Um padrão de limiar Bayer 16×16 repetido, com uma grade fina e regular.',
+                'algo.desc.Blue noise': 'Um padrão de limiar ordenado, estável e uniformemente espaçado, sem a grade regular do Bayer.',
+                'algo.desc.Halftone': 'Uma retícula ordenada de pontos agrupados que cresce a partir do centro de cada célula.',
+                'algo.desc.Threshold': 'Um único corte fixo, sem pontilhamento; os meios-tons não são preservados.',
+                'canvas.label': 'Imagem pontilhada',
+                'canvas.original': 'Original',
+                'section.adjust': 'Ajustes',
+                'adjust.pixelSize': 'Tamanho do pixel',
+                'adjust.brightness': 'Brilho',
+                'animation.timeline': 'Linha do tempo da animação',
+                'animation.position': 'Posição na linha do tempo',
+                'animation.pixelSize': 'Quadros-chave do tamanho do pixel',
+                'animation.brightness': 'Quadros-chave do brilho',
+                'animation.contrast': 'Quadros-chave do contraste',
+                'animation.midpoint': 'Quadros-chave do ponto médio',
+                'animation.addKeyframe': 'Adicionar ou atualizar quadro-chave',
+                'animation.time': '{current} / {duration}',
+                'adjust.contrast': 'Contraste',
+                'adjust.midpoint': 'Ponto médio',
+                'section.colors': 'Cores',
+                'colors.ink': 'Tinta',
+                'colors.paper': 'Papel',
+                'colors.inkHex': 'Hex da tinta',
+                'colors.paperHex': 'Hex do papel',
+                'colors.inkPicker': 'Cor da tinta',
+                'colors.paperPicker': 'Cor do papel',
+                'colors.transparent': 'Papel transparente',
+                'colors.add': '+ Adicionar cor',
+                'colors.maxSize': 'Tamanho máximo da paleta',
+                'colors.maxSizeValue': 'Até {n} cores',
+                'settings.reset': 'Redefinir para os padrões',
+                'palette.lospecInput': 'URL ou slug da paleta Lospec',
+                'palette.lospecBrowse': 'Explorar paletas no Lospec',
+                'palette.lospecLoad': 'Carregar do Lospec',
+                'palette.lospecLoading': 'Carregando paleta…',
+                'palette.lospecLoaded': '{name} carregada ({n} cores)',
+                'palette.lospecInvalidInput': 'Digite uma URL ou slug de paleta do Lospec.',
+                'palette.lospecNotFound': 'Paleta não encontrada no Lospec.',
+                'palette.lospecInvalid': 'O Lospec retornou dados de paleta inválidos.',
+                'palette.lospecTooMany': 'Esta paleta tem {n} cores. O máximo suportado é 32.',
+                'palette.lospecFailed': 'Não foi possível carregar a paleta do Lospec. Verifique sua conexão e tente novamente.',
+                'colors.extra': 'Cor {n}',
+                'colors.extraAria': 'Cor {n} da paleta',
+                'colors.remove': 'Remover',
+                'colors.removeAria': 'Remover a cor {n} da paleta',
+                'palette.title': 'Paleta de {n} cores',
+                'palette.apply': 'Aplicar paleta de {n} cores',
+                'section.download': 'Baixar',
+                'download.upscale': 'Ampliação',
+                'download.copyHtml': 'Copiar código HTML',
+                'download.htmlCopied': 'HTML copiado!',
+                'download.svg': 'Baixar SVG',
+                'download.png': 'Baixar PNG',
+                'download.gif': 'Baixar GIF',
+                'download.gifDuration': 'Duração do GIF (segundos)',
+                'download.gifDurationHint': 'Recorta a partir do início; animações mais curtas mantêm a duração original.',
+                'download.gifLimits': 'Exportações GIF: até 15 segundos, 10 fps e 480 px de largura.',
+                'download.gifProgress': 'Codificando quadro {current} de {total}…',
+                'download.gifFailed': 'Não foi possível exportar o GIF. Tente uma animação menor ou mais curta.',
+                'download.gifReady': 'GIF baixado.',
+                'download.clipboard': 'Copiar para a área de transferência',
+                'download.copied': 'Copiado!',
+                'download.copyFailed': 'Falha ao copiar',
+                'download.imgAlt': 'Bitmap pontilhado',
+                'settings.fewer': 'Menos opções',
+                'settings.more': 'Mais opções',
+                'settings.extendedPixel': 'Tamanho de pixel estendido (máx. 100)',
+                'status.loading': 'Carregando imagem…',
+                'status.processFailed': 'Não foi possível processar a imagem. Tente carregar um bitmap local.',
+                'status.loadFailed': 'Não foi possível carregar a imagem. Carregue um bitmap compatível.',
+                'status.notImage': 'Escolha um arquivo de imagem.',
+                'status.mediaLoadFailed': 'Não foi possível carregar este GIF ou vídeo. Tente outro arquivo.',
+                'status.mediaUnsupported': 'Este formato de vídeo não é compatível com seu navegador.',
+                'status.playBlocked': 'A reprodução da prévia foi bloqueada. Use Reproduzir prévia para iniciar.',
+                'theme.label': 'Tema',
+                'theme.bw': '1-bit preto e branco',
+                'theme.wb': '1-bit branco e preto',
+                'theme.clean': 'Claro',
+                'theme.dark': 'Escuro',
+                'language.label': 'Idioma'
+            },
+            es: {
+                'header.fit': 'Ajustar',
+                'header.compare': 'Comparar',
+                'header.upload': 'Cargar imagen o vídeo',
+                'header.play': 'Reproducir vista previa',
+                'header.pause': 'Pausar vista previa',
+                'header.grid': 'Cuadrícula de {w} × {h} px',
+                'app.version': 'Versión {version}',
+                'algo.region': 'Algoritmos de tramado',
+                'algo.scrollPrev': 'Desplazar algoritmos hacia atrás',
+                'algo.scrollNext': 'Desplazar algoritmos hacia adelante',
+                'algo.name.Sierra 2-row': 'Sierra 2 filas',
+                'algo.name.Blue noise': 'Ruido azul',
+                'algo.name.Halftone': 'Semitono',
+                'algo.name.Threshold': 'Umbral',
+                'algo.desc.Floyd': 'Difunde todo el error de cuantización de cada píxel a cuatro vecinos.',
+                'algo.desc.Atkinson': 'Difunde seis octavos del error para un resultado nítido y de alto contraste.',
+                'algo.desc.Jarvis': 'Reparte el error entre doce vecinos en dos filas para obtener tonos más suaves.',
+                'algo.desc.Stucki': 'Un núcleo de doce vecinos en dos filas con una textura algo más nítida que Jarvis.',
+                'algo.desc.Burkes': 'Un núcleo de siete vecinos, entre Floyd y los métodos más grandes de dos filas.',
+                'algo.desc.Sierra': 'Un núcleo de diez vecinos que reparte el error en dos filas.',
+                'algo.desc.Sierra 2-row': 'Una versión más ligera de Sierra con siete vecinos.',
+                'algo.desc.Sierra lite': 'Un núcleo rápido de tres vecinos que difunde todo el error.',
+                'algo.desc.Bayer 2×2': 'Un patrón de umbral Bayer 2×2 en mosaico con cinco tonos posibles.',
+                'algo.desc.Bayer 4×4': 'Un patrón de umbral Bayer 4×4 en mosaico con diecisiete tonos posibles.',
+                'algo.desc.Bayer 8×8': 'Un patrón de umbral Bayer 8×8 en mosaico con sesenta y cinco tonos posibles.',
+                'algo.desc.Bayer 16×16': 'Un patrón de umbral Bayer 16×16 en mosaico con una cuadrícula fina y repetitiva.',
+                'algo.desc.Blue noise': 'Un patrón de umbral ordenado, estable y uniformemente espaciado, sin la cuadrícula regular de Bayer.',
+                'algo.desc.Halftone': 'Una trama ordenada de puntos agrupados que crece desde el centro de cada celda.',
+                'algo.desc.Threshold': 'Un único umbral fijo sin tramado; los medios tonos no se conservan.',
+                'canvas.label': 'Imagen tramada',
+                'canvas.original': 'Original',
+                'section.adjust': 'Ajustes',
+                'adjust.pixelSize': 'Tamaño de píxel',
+                'adjust.brightness': 'Brillo',
+                'animation.timeline': 'Línea de tiempo de animación',
+                'animation.position': 'Posición en la línea de tiempo',
+                'animation.pixelSize': 'Fotogramas clave del tamaño de píxel',
+                'animation.brightness': 'Fotogramas clave del brillo',
+                'animation.contrast': 'Fotogramas clave del contraste',
+                'animation.midpoint': 'Fotogramas clave del punto medio',
+                'animation.addKeyframe': 'Añadir o actualizar fotograma clave',
+                'animation.time': '{current} / {duration}',
+                'adjust.contrast': 'Contraste',
+                'adjust.midpoint': 'Punto medio',
+                'section.colors': 'Colores',
+                'colors.ink': 'Tinta',
+                'colors.paper': 'Papel',
+                'colors.inkHex': 'Hex de la tinta',
+                'colors.paperHex': 'Hex del papel',
+                'colors.inkPicker': 'Color de la tinta',
+                'colors.paperPicker': 'Color del papel',
+                'colors.transparent': 'Papel transparente',
+                'colors.add': '+ Añadir color',
+                'colors.maxSize': 'Tamaño máximo de la paleta',
+                'colors.maxSizeValue': 'Hasta {n} colores',
+                'settings.reset': 'Restablecer valores predeterminados',
+                'palette.lospecInput': 'URL o slug de paleta de Lospec',
+                'palette.lospecBrowse': 'Explorar paletas en Lospec',
+                'palette.lospecLoad': 'Cargar desde Lospec',
+                'palette.lospecLoading': 'Cargando paleta…',
+                'palette.lospecLoaded': '{name} cargada ({n} colores)',
+                'palette.lospecInvalidInput': 'Introduce una URL o un slug de paleta de Lospec.',
+                'palette.lospecNotFound': 'No se encontró la paleta en Lospec.',
+                'palette.lospecInvalid': 'Lospec devolvió datos de paleta no válidos.',
+                'palette.lospecTooMany': 'Esta paleta tiene {n} colores. El máximo compatible es 32.',
+                'palette.lospecFailed': 'No se pudo cargar la paleta de Lospec. Comprueba tu conexión e inténtalo de nuevo.',
+                'colors.extra': 'Color {n}',
+                'colors.extraAria': 'Color {n} de la paleta',
+                'colors.remove': 'Quitar',
+                'colors.removeAria': 'Quitar el color {n} de la paleta',
+                'palette.title': 'Paleta de {n} colores',
+                'palette.apply': 'Aplicar paleta de {n} colores',
+                'section.download': 'Descargar',
+                'download.upscale': 'Escalado',
+                'download.copyHtml': 'Copiar código HTML',
+                'download.htmlCopied': '¡HTML copiado!',
+                'download.svg': 'Descargar SVG',
+                'download.png': 'Descargar PNG',
+                'download.gif': 'Descargar GIF',
+                'download.gifDuration': 'Duración del GIF (segundos)',
+                'download.gifDurationHint': 'Recorta desde el inicio; las animaciones más cortas mantienen su duración original.',
+                'download.gifLimits': 'Exportaciones GIF: hasta 15 segundos, 10 fps y 480 px de ancho.',
+                'download.gifProgress': 'Codificando fotograma {current} de {total}…',
+                'download.gifFailed': 'No se pudo exportar el GIF. Prueba una animación más pequeña o corta.',
+                'download.gifReady': 'GIF descargado.',
+                'download.clipboard': 'Copiar al portapapeles',
+                'download.copied': '¡Copiado!',
+                'download.copyFailed': 'Error al copiar',
+                'download.imgAlt': 'Mapa de bits tramado',
+                'settings.fewer': 'Menos opciones',
+                'settings.more': 'Más opciones',
+                'settings.extendedPixel': 'Tamaño de píxel extendido (máx. 100)',
+                'status.loading': 'Cargando imagen…',
+                'status.processFailed': 'No se pudo procesar la imagen. Intenta cargar un mapa de bits local.',
+                'status.loadFailed': 'No se pudo cargar la imagen. Carga un mapa de bits compatible.',
+                'status.notImage': 'Elige un archivo de imagen.',
+                'status.mediaLoadFailed': 'No se pudo cargar este GIF o vídeo. Prueba con otro archivo.',
+                'status.mediaUnsupported': 'Tu navegador no admite este formato de vídeo.',
+                'status.playBlocked': 'Se bloqueó la reproducción. Usa Reproducir vista previa para iniciarla.',
+                'theme.label': 'Tema',
+                'theme.bw': '1-bit blanco y negro',
+                'theme.wb': '1-bit blanco y negro invertido',
+                'theme.clean': 'Claro',
+                'theme.dark': 'Oscuro',
+                'language.label': 'Idioma'
+            }
+        };
+        const LANGUAGE_NAMES = { en: 'English', 'pt-BR': 'Português (Brasil)', es: 'Español' };
+        const I18N_ATTRIBUTES = ['title', 'aria-label', 'aria-valuetext', 'alt', 'placeholder'];
+        let currentLanguage = (() => {
+            try {
+                const saved = localStorage.getItem('bt-language');
+                return I18N[saved] ? saved : 'en';
+            } catch (error) {
+                return 'en';
+            }
+        })();
+        document.documentElement.lang = currentLanguage;
+
+        function t(key, vars) {
+            const text = I18N[currentLanguage][key] ?? I18N.en[key] ?? key;
+            return vars ? text.replace(/\{(\w+)\}/g, (match, name) => (name in vars ? vars[name] : match)) : text;
+        }
+        function readI18nVars(el) {
+            try {
+                return el.dataset.i18nVars ? JSON.parse(el.dataset.i18nVars) : undefined;
+            } catch (error) {
+                return undefined;
+            }
+        }
+        function storeI18nVars(el, vars) {
+            if (vars) el.dataset.i18nVars = JSON.stringify(vars);
+            else delete el.dataset.i18nVars;
+        }
+        
+        function setI18nText(el, key, vars) {
+            if (!key) {
+                delete el.dataset.i18n;
+                delete el.dataset.i18nVars;
+                el.textContent = '';
+                return;
+            }
+            el.dataset.i18n = key;
+            storeI18nVars(el, vars);
+            el.textContent = t(key, vars);
+        }
+        function setI18nAttr(el, attr, key, vars) {
+            el.setAttribute(`data-i18n-${attr}`, key);
+            storeI18nVars(el, vars);
+            el.setAttribute(attr, t(key, vars));
+        }
+        function applyTranslations(root = document) {
+            root.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.dataset.i18n, readI18nVars(el));
+            });
+            I18N_ATTRIBUTES.forEach(attr => {
+                root.querySelectorAll(`[data-i18n-${attr}]`).forEach(el => {
+                    el.setAttribute(attr, t(el.getAttribute(`data-i18n-${attr}`), readI18nVars(el)));
+                });
+            });
+        }
+        function setLanguage(language) {
+            if (!I18N[language]) return;
+            currentLanguage = language;
+            document.documentElement.lang = language;
+            try {
+                localStorage.setItem('bt-language', language);
+            } catch (error) {}
+            applyTranslations();
+            const selector = document.getElementById('language-selector');
+            if (selector) selector.value = language;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.createElement('label');
+            wrapper.id = 'language-switcher';
+            const label = document.createElement('span');
+            label.dataset.i18n = 'language.label';
+            const select = document.createElement('select');
+            select.id = 'language-selector';
+            Object.entries(LANGUAGE_NAMES).forEach(([code, name]) => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.lang = code;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+            select.value = currentLanguage;
+            select.addEventListener('change', () => setLanguage(select.value));
+            wrapper.append(label, ' ', select);
+            (document.querySelector('aside > div') || document.body).appendChild(wrapper);
+            applyTranslations();
+        });
+    </script>
+    <script>
+        ['./assets/tailwind.css', './assets/fonts/inter.css', './assets/icons/style.css'].forEach(href => {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href;
+            document.head.appendChild(link);
+        });
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #dither-canvas,
+        #overlay-canvas,
+        #image-wrapper,
+        #canvas-container {
+            -ms-interpolation-mode: nearest-neighbor;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: #111827;
+            cursor: pointer;
+            margin-top: -5px;
+            box-shadow: 0 0 0 2px white, 0 0 0 3px #111827;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            cursor: pointer;
+            background: #e5e7eb;
+            border-radius: 1px;
+        }
+        input[type=range]:focus { outline: none; }
+
+        .toggle-checkbox:checked { right: 0; border-color: #d1d5db; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #e5e7eb; }
+        .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+        .toggle-label {
+            width: 36px; height: 20px; background-color: #e5e7eb; border-radius: 9999px; position: relative; cursor: pointer; transition: background-color 0.2s;
+        }
+        .toggle-label:after {
+            content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background-color: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .dither-floyd { background-image: radial-gradient(#000 1px, transparent 1px); background-size: 3px 3px; }
+        .dither-atkinson { background-image: radial-gradient(#000 1px, transparent 1px); background-size: 4px 4px; background-position: 0 0, 2px 2px; }
+        .dither-bayer { background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000); background-size: 4px 4px; background-position: 0 0, 2px 2px; }
+        .dither-noise { background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.5"/%3E%3C/svg%3E'); }
+
+        @media (max-width: 768px) {
+            body {
+                height: auto !important;
+                min-height: 100vh;
+                overflow: auto !important;
+                flex-direction: column;
+            }
+            body > div:first-child {
+                flex: none;
+                width: 100%;
+                height: auto !important;
+            }
+            header {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                padding: 1rem !important;
+            }
+            header > div:first-child {
+                flex-wrap: wrap;
+                row-gap: 0.5rem;
+            }
+            main {
+                flex: none !important;
+                height: 58vh;
+                min-height: 280px;
+                padding: 0 1rem 1rem !important;
+            }
+            #image-wrapper {
+                max-height: none;
+            }
+            aside {
+                width: 100% !important;
+                flex-shrink: 0;
+                overflow: visible !important;
+                border-left: 0;
+                border-top: 1px solid #f3f4f6;
+            }
+            aside > div {
+                max-width: 640px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header > div:first-child {
+                gap: 0.4rem;
+            }
+            header > div:first-child > button {
+                padding-left: 0.65rem;
+                padding-right: 0.65rem;
+                margin-left: 0;
+            }
+            header > div:last-child {
+                width: 100%;
+            }
+            aside > div {
+                padding: 1rem 1rem 3rem !important;
+            }
+        }
+
+        :root {
+            --page-bg: #edf6ff;
+            --page-bg-2: #f7fbff;
+            --panel: #ffffff;
+            --panel-soft: #ebf4ff;
+            --panel-strong: #dfeeff;
+            --line: #d5e6ff;
+            --line-strong: #bed7ff;
+            --primary: #2563eb;
+            --primary-strong: #1d4ed8;
+            --primary-soft: #dbeafe;
+            --ink: #12304d;
+            --muted: #5e7895;
+            --shadow: rgba(37, 99, 235, 0.14);
+        }
+        body {
+            background: var(--page-bg) !important;
+            color: var(--ink);
+        }
+        body > div:first-child {
+            padding: 14px 0 14px 14px;
+        }
+        header {
+            margin: 0 14px 12px 0;
+            padding: 14px 18px !important;
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.92) !important;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.08);
+        }
+        header > div:first-child > div {
+            border-radius: 12px;
+            background: var(--panel-soft);
+            border-color: var(--line);
+        }
+        header > div:first-child > button {
+            border-radius: 10px;
+            color: var(--ink);
+            border-color: var(--line);
+        }
+        header > div:first-child > button:nth-of-type(3),
+        #upload-image-button {
+            background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+        }
+        #upload-image-button:hover {
+            background: linear-gradient(135deg, var(--primary-strong), var(--primary));
+        }
+        header > div:last-child {
+            color: var(--muted);
+            letter-spacing: 0.04em;
+        }
+        body > div:first-child > .relative.bg-\[\#f9fafb\] {
+            margin-right: 14px;
+            padding-left: 12px;
+            padding-right: 12px;
+            border-radius: 16px;
+            background: var(--page-bg) !important;
+        }
+        #algorithm-list > div {
+            border-radius: 15px;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.04);
+        }
+        #algorithm-list > div.border-gray-900 {
+            border-color: var(--primary) !important;
+            box-shadow: 0 5px 14px rgba(37, 99, 235, 0.12);
+        }
+        main {
+            padding-right: 14px !important;
+        }
+        #canvas-container {
+            border: 1px solid var(--line-strong);
+            border-radius: 26px;
+            background-color: #f5faff;
+            background-image: radial-gradient(#cfe0ff 0.8px, transparent 0.8px);
+            background-size: 18px 18px;
+            box-shadow: 0 16px 36px rgba(37, 99, 235, 0.11);
+        }
+        #preview-workspace {
+            flex: 1 1 0%;
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        #animation-timeline {
+            flex: 0 0 auto;
+            padding: 8px 18px 14px 10px;
+            color: #4b5563;
+        }
+        #animation-timeline[hidden] { display: none; }
+        .timeline-track {
+            position: relative;
+            height: 22px;
+            border-radius: 5px;
+            background: #f3f4f6;
+        }
+        .timeline-track::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 10px;
+            height: 2px;
+            background: #d1d5db;
+        }
+        .timeline-playhead {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #8049f5;
+            pointer-events: none;
+        }
+        .timeline-keyframe {
+            position: absolute;
+            z-index: 2;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            padding: 0;
+            border: 0;
+            border-radius: 2px;
+            background: #8049f5;
+            transform: translateX(-50%) rotate(45deg);
+        }
+        .keyframe-button[aria-pressed="true"] { color: #8049f5; }
+        html[data-theme="dark"] #animation-timeline { color: #d1d5db; }
+        html[data-theme="dark"] .timeline-track { background: #242832; }
+        html[data-theme="dark"] .timeline-track::before { background: #555d6c; }
+        html[data-theme="bw"] .timeline-track,
+        html[data-theme="wb"] .timeline-track { background: #fff; border: 1px solid #000; }
+        html[data-theme="bw"] .timeline-track::before,
+        html[data-theme="wb"] .timeline-track::before { background: #000; }
+        @media (max-width: 768px) {
+            #animation-timeline { padding: 8px 16px 14px; }
+        }
+        aside {
+            width: 360px;
+            margin: 14px;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            background: #fdfefe;
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.08);
+        }
+        aside > div {
+            padding: 28px 24px 48px !important;
+        }
+        aside h3 {
+            color: var(--ink);
+            letter-spacing: 0.015em;
+        }
+        #shape-grid button {
+            border-radius: 12px;
+            border-color: var(--line);
+            background: var(--panel);
+        }
+        #shape-grid button.border-gray-900 {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+        }
+        #color-palette > div,
+        #color-palette > button {
+            height: 24px;
+            border-radius: 8px;
+        }
+        #color-palette {
+            gap: 0.625rem;
+            margin-top: 0.9rem;
+        }
+        #add-color-button {
+            margin-bottom: 0.9rem;
+        }
+        aside button {
+            border-radius: 12px;
+        }
+        .bg-gray-900,
+        button.bg-gray-900 {
+            background-color: var(--primary) !important;
+            border-color: var(--primary) !important;
+        }
+        .hover\:bg-gray-800:hover,
+        button.hover\:bg-gray-800:hover {
+            background-color: var(--primary-strong) !important;
+        }
+        @media (max-width: 768px) {
+            body > div:first-child {
+                padding: 10px;
+            }
+            header, body > div:first-child > .relative.bg-\[\#f9fafb\] {
+                margin-right: 0;
+            }
+            main {
+                padding-right: 0 !important;
+            }
+            aside {
+                width: auto !important;
+                margin: 10px;
+            }
+        }
+        #workspace-content {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+        }
+        #algorithm-ribbon {
+            width: 92px;
+            flex: 0 0 92px;
+            min-height: 0;
+            padding: 10px 8px;
+            margin: 0 10px 14px 0;
+            border-radius: 16px;
+            background: var(--page-bg) !important;
+            display: flex;
+            flex-direction: column;
+        }
+        #algorithm-ribbon > div:has(#algorithm-scroll-left) { order: -1; }
+        #algorithm-list {
+            flex: 1 1 0;
+            min-height: 0;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 0 2px;
+            scroll-snap-type: y mandatory;
+        }
+        #algorithm-scroll-left,
+        #algorithm-scroll-right {
+            position: static;
+            width: 100%;
+            height: 30px;
+            flex: 0 0 30px;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+        }
+        #algorithm-scroll-left i { transform: rotate(90deg); }
+        #algorithm-scroll-right i { transform: rotate(90deg); }
+        #algorithm-ribbon > div:has(#algorithm-scroll-left),
+        #algorithm-ribbon > div:has(#algorithm-scroll-right) {
+            position: static;
+            width: 100%;
+            height: 30px;
+            flex: 0 0 30px;
+            padding: 0;
+            background: transparent;
+            pointer-events: auto;
+            justify-content: center;
+        }
+        @media (max-width: 768px) {
+            #workspace-content { flex-direction: column; }
+            #algorithm-ribbon {
+                width: auto;
+                flex: 0 0 auto;
+                height: 106px;
+                margin: 0 0 8px;
+                padding: 4px 8px;
+            }
+            #algorithm-list {
+                flex-direction: row;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x mandatory;
+            }
+            #algorithm-scroll-left i { transform: none; }
+            #algorithm-scroll-right i { transform: none; }
+            #algorithm-ribbon > div:has(#algorithm-scroll-left),
+            #algorithm-ribbon > div:has(#algorithm-scroll-right) {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 32px;
+                height: auto;
+                z-index: 2;
+            }
+            #algorithm-ribbon > div:has(#algorithm-scroll-left) { left: 0; }
+            #algorithm-ribbon > div:has(#algorithm-scroll-right) { right: 0; }
+        }
+        @media (max-width: 768px), (max-height: 520px) {
+            html,
+            body {
+                width: 100%;
+                height: 100% !important;
+                min-height: 0 !important;
+                overflow: hidden !important;
+            }
+            body {
+                height: 100dvh !important;
+                flex-direction: column;
+                padding:
+                    env(safe-area-inset-top, 0px)
+                    env(safe-area-inset-right, 0px)
+                    env(safe-area-inset-bottom, 0px)
+                    env(safe-area-inset-left, 0px);
+            }
+            body > div:first-child {
+                flex: 0 0 auto;
+                width: 100%;
+                height: auto !important;
+                min-height: 0;
+                padding: 6px 8px 0;
+                overflow: visible;
+            }
+            header {
+                flex: 0 0 auto;
+                flex-wrap: nowrap;
+                gap: 0;
+                margin: 0 0 6px;
+                padding: 4px !important;
+                border-radius: 14px;
+            }
+            header > div:first-child {
+                width: 100%;
+                flex: 1 1 auto;
+                flex-wrap: nowrap;
+                gap: 5px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scrollbar-width: none;
+                overscroll-behavior-x: contain;
+                -webkit-overflow-scrolling: touch;
+            }
+            header > div:first-child::-webkit-scrollbar { display: none; }
+            header > div:first-child > * { flex-shrink: 0; }
+            header > div:first-child > button,
+            header > div:first-child > div {
+                min-height: 40px;
+                margin-left: 0;
+            }
+            header > div:first-child > button {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            header > div:last-child { display: none; }
+            #workspace-content {
+                flex: 0 0 auto;
+                height: 41dvh;
+                min-height: 245px;
+                max-height: 360px;
+                overflow: hidden;
+            }
+            #algorithm-ribbon {
+                height: 72px;
+                min-height: 72px;
+                flex: 0 0 72px;
+                margin: 0 0 6px;
+                padding: 2px;
+            }
+            #algorithm-list {
+                gap: 6px;
+                padding: 2px 28px 4px;
+                scroll-padding-inline: 28px;
+                touch-action: pan-x;
+            }
+            #algorithm-list > div {
+                width: 64px;
+                height: 62px;
+                padding: 3px;
+            }
+            #algorithm-list > div > div {
+                width: 40px;
+                height: 34px;
+                margin-top: 0;
+            }
+            #algorithm-list > div > span {
+                margin-top: 1px;
+                font-size: 10px;
+            }
+            #algorithm-ribbon > div:has(#algorithm-scroll-left),
+            #algorithm-ribbon > div:has(#algorithm-scroll-right) {
+                top: 2px;
+                bottom: 2px;
+                width: 28px;
+                padding: 0;
+            }
+            #algorithm-ribbon > div:has(#algorithm-scroll-left) { left: 0; }
+            #algorithm-ribbon > div:has(#algorithm-scroll-right) { right: 0; }
+            #algorithm-scroll-left,
+            #algorithm-scroll-right {
+                width: 30px;
+                height: 38px;
+                background: var(--panel);
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                box-shadow: 0 2px 8px var(--shadow);
+            }
+            main {
+                flex: 1 1 0% !important;
+                width: 100%;
+                height: auto !important;
+                min-height: 0;
+                padding: 0 !important;
+            }
+            #canvas-container {
+                border-radius: 16px;
+                touch-action: pan-x pan-y;
+            }
+            #divider {
+                width: 24px;
+                border: 0;
+                background: transparent;
+                box-shadow: none;
+                touch-action: none;
+            }
+            #divider::before {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: #9ca3af;
+                transform: translateX(-50%);
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+            }
+            #divider > div { z-index: 1; }
+            aside {
+                flex: 1 1 0;
+                min-height: 0;
+                width: auto !important;
+                margin: 6px 8px 0;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                overscroll-behavior-y: contain;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 16px 16px 0 0;
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+            aside > div {
+                max-width: 640px;
+                padding: 16px 16px 24px !important;
+            }
+            aside input[type="range"] {
+                min-height: 30px;
+                touch-action: pan-x;
+            }
+            aside input[type="range"]::-webkit-slider-thumb {
+                width: 20px;
+                height: 20px;
+                margin-top: -9px;
+            }
+            aside input[type="range"]::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+            }
+            aside button,
+            aside select,
+            aside input:not([type="range"]) {
+                min-height: 40px;
+            }
+            #language-switcher,
+            #theme-switcher {
+                margin-top: 16px;
+                margin-right: 0;
+            }
+        }
+        @media (min-width: 769px) and (max-height: 520px) {
+            #workspace-content {
+                flex-direction: column;
+                height: 46dvh;
+                min-height: 170px;
+                max-height: 250px;
+            }
+            #algorithm-ribbon {
+                width: auto;
+                min-width: 0;
+                height: 58px;
+                min-height: 58px;
+                flex: 0 0 58px;
+                margin: 0 0 4px;
+                padding: 0;
+            }
+            #algorithm-list {
+                flex-direction: row;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding: 0 32px;
+                scroll-snap-type: x mandatory;
+                touch-action: pan-x;
+            }
+            #algorithm-list > div {
+                width: 64px;
+                height: 52px;
+                padding: 2px;
+            }
+            #algorithm-list > div > div {
+                width: 36px;
+                height: 30px;
+                margin-top: 0;
+            }
+            #algorithm-list > div > span {
+                margin-top: 0;
+                font-size: 10px;
+            }
+            #algorithm-ribbon > div:has(#algorithm-scroll-left),
+            #algorithm-ribbon > div:has(#algorithm-scroll-right) {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 30px;
+                height: auto;
+                padding: 0;
+            }
+            #algorithm-ribbon > div:has(#algorithm-scroll-left) { left: 0; }
+            #algorithm-ribbon > div:has(#algorithm-scroll-right) { right: 0; }
+            main {
+                flex: 1 1 0% !important;
+                width: 100%;
+                height: auto !important;
+                min-height: 0;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#f9fafb] text-gray-900 h-screen flex overflow-hidden">
+
+    <div class="flex-1 flex flex-col min-w-0 h-full relative">
+        
+        <header class="flex items-center justify-between px-6 py-4 border-b border-transparent bg-[#f9fafb] z-10">
+            <div class="flex items-center gap-2 text-sm">
+                <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white">
+                    <button class="px-3 py-1.5 hover:bg-gray-50 text-gray-600 transition-colors border-r border-gray-200"><i class="ph ph-minus"></i></button>
+                    <span class="px-3 py-1.5 text-gray-700 min-w-[3rem] text-center">79%</span>
+                    <button class="px-3 py-1.5 hover:bg-gray-50 text-gray-600 transition-colors border-l border-gray-200"><i class="ph ph-plus"></i></button>
+                </div>
+                <button class="px-4 py-1.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors" data-i18n="header.fit">Fit</button>
+                <button class="px-4 py-1.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors">1:1</button>
+                <button class="px-4 py-1.5 border border-gray-900 rounded-lg bg-gray-900 hover:bg-gray-800 text-white font-medium transition-colors ml-2" data-i18n="header.compare">Compare</button>
+                <button id="media-play-button" type="button" class="hidden px-3 py-1.5 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 text-gray-700 font-medium transition-colors" data-i18n="header.pause">Pause preview</button>
+                <button id="upload-image-button" type="button" class="px-4 py-1.5 rounded-lg bg-[#8049f5] hover:bg-[#723ee0] text-white font-medium transition-colors" data-i18n="header.upload">Upload image or video</button>
+                <input id="image-file-input" type="file" accept="image/*,video/*" class="hidden">
+            </div>
+            <div class="flex items-center gap-3 text-xs text-gray-400 font-medium">
+                <span class="px-2 py-1 rounded-md border border-gray-200 bg-white" data-i18n-aria-label="app.version" data-i18n-vars='{"version":"0.3.5"}' aria-label="Version 0.3.5">v0.3.5</span>
+                <span data-i18n="header.grid" data-i18n-vars='{"w":900,"h":900}'>900 × 900 px grid</span>
+            </div>
+        </header>
+
+        <div id="workspace-content">
+        <div id="algorithm-ribbon" class="relative bg-[#f9fafb] z-10 px-6">
+            <div id="algorithm-list" class="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory pb-4 pt-1 items-center" role="region" aria-label="Dithering algorithms" data-i18n-aria-label="algo.region" tabindex="0">
+            </div>
+            <div class="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-[#f9fafb] to-transparent pointer-events-none flex items-center justify-start pl-2">
+                <button id="algorithm-scroll-left" type="button" aria-label="Scroll algorithms back" data-i18n-aria-label="algo.scrollPrev" class="pointer-events-auto w-8 h-8 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm text-gray-600 hover:bg-gray-50 disabled:opacity-0 disabled:pointer-events-none transition-opacity">
+                    <i class="ph ph-caret-left"></i>
+                </button>
+            </div>
+            <div class="absolute right-0 top-0 bottom-4 w-24 bg-gradient-to-l from-[#f9fafb] to-transparent pointer-events-none flex items-center justify-end pr-4">
+                <button id="algorithm-scroll-right" type="button" aria-label="Scroll algorithms forward" data-i18n-aria-label="algo.scrollNext" class="pointer-events-auto w-8 h-8 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm text-gray-600 hover:bg-gray-50 disabled:opacity-0 disabled:pointer-events-none transition-opacity z-20">
+                    <i class="ph ph-caret-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="preview-workspace">
+        <main class="flex-1 min-h-0 p-6 pt-0 flex items-center justify-center overflow-hidden">
+            <div class="w-full h-full bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 flex items-center justify-center overflow-hidden relative" id="canvas-container">
+                
+                <div class="relative flex-none select-none" id="image-wrapper">
+                    
+                    <canvas id="dither-canvas" class="w-full h-full object-contain" aria-label="Dithered image" data-i18n-aria-label="canvas.label"></canvas>
+                    
+                    <div id="split-overlay" class="absolute top-0 left-0 h-full w-[50%] overflow-hidden">
+                        <canvas aria-label="Original" data-i18n-aria-label="canvas.original" class="h-full object-contain max-w-none w-[768px]" id="overlay-canvas"></canvas>
+                    </div>
+
+                    <div id="divider" class="absolute top-0 bottom-0 left-[50%] w-0.5 bg-gray-300 cursor-ew-resize transform -translate-x-1/2 hover:bg-gray-400 hover:w-1 transition-all z-20 shadow-[0_0_4px_rgba(0,0,0,0.2)]">
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-8 bg-white border border-gray-300 rounded shadow-sm flex items-center justify-center">
+                            <div class="w-2 flex justify-between">
+                                <div class="w-px h-3 bg-gray-400"></div>
+                                <div class="w-px h-3 bg-gray-400"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+        <section id="animation-timeline" hidden aria-label="Animation timeline" data-i18n-aria-label="animation.timeline">
+            <div class="flex items-center gap-3 mb-2">
+                <span id="timeline-current-time" class="text-xs font-mono tabular-nums">0:00.00 / 0:00.00</span>
+                <input id="timeline-seek" type="range" min="0" max="1000" step="1" value="0" class="flex-1" aria-label="Timeline position" data-i18n-aria-label="animation.position">
+            </div>
+            <div class="space-y-1">
+                <div class="flex items-center gap-3">
+                    <span class="w-24 flex-none text-xs" data-i18n="adjust.pixelSize">Pixel size</span>
+                    <div class="timeline-track flex-1" id="pixel-size-keyframes" role="group" aria-label="Pixel size keyframes" data-i18n-aria-label="animation.pixelSize"></div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-24 flex-none text-xs" data-i18n="adjust.brightness">Brightness</span>
+                    <div class="timeline-track flex-1" id="brightness-keyframes" role="group" aria-label="Brightness keyframes" data-i18n-aria-label="animation.brightness"></div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-24 flex-none text-xs" data-i18n="adjust.contrast">Contrast</span>
+                    <div class="timeline-track flex-1" id="contrast-keyframes" role="group" aria-label="Contrast keyframes" data-i18n-aria-label="animation.contrast"></div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="w-24 flex-none text-xs" data-i18n="adjust.midpoint">Midpoint</span>
+                    <div class="timeline-track flex-1" id="midpoint-keyframes" role="group" aria-label="Midpoint keyframes" data-i18n-aria-label="animation.midpoint"></div>
+                </div>
+            </div>
+        </section>
+        </div>
+        </div>
+    </div>
+
+    <aside class="w-[340px] flex-shrink-0 bg-white border-l border-gray-100 overflow-y-auto z-20 shadow-[-4px_0_15px_rgba(0,0,0,0.02)]">
+        <div class="p-6 pb-24">
+            
+            <div class="mb-8">
+                <h3 class="text-[13px] font-semibold text-gray-900 mb-4" data-i18n="section.adjust">Adjust</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center group">
+                        <span class="w-24 text-[13px] text-gray-600 leading-tight" data-i18n="adjust.pixelSize">Pixel size</span>
+                        <button type="button" class="keyframe-button hidden w-6 h-6 flex-none rounded text-gray-400 hover:text-purple-600" data-keyframe-button="pixelSize" aria-label="Add or update keyframe" data-i18n-aria-label="animation.addKeyframe" data-i18n-title="animation.addKeyframe" aria-pressed="false"><i class="ph ph-diamond"></i></button>
+                        <div class="flex-1 px-2 relative flex items-center">
+                            <input type="range" min="1" max="10" value="1" class="w-full" data-keyframe="pixelSize">
+                        </div>
+                        <input type="number" value="1" class="w-12 text-right text-[13px] text-gray-900 border-none outline-none bg-transparent">
+                    </div>
+                    
+                    <div class="flex items-center group">
+                        <span class="w-24 text-[13px] text-gray-600 leading-tight" data-i18n="adjust.brightness">Brightness</span>
+                        <button type="button" class="keyframe-button hidden w-6 h-6 flex-none rounded text-gray-400 hover:text-purple-600" data-keyframe-button="brightness" aria-label="Add or update keyframe" data-i18n-aria-label="animation.addKeyframe" data-i18n-title="animation.addKeyframe" aria-pressed="false"><i class="ph ph-diamond"></i></button>
+                        <div class="flex-1 px-2 relative flex items-center">
+                            <input type="range" min="-100" max="100" value="0" class="w-full" data-keyframe="brightness">
+                        </div>
+                        <input type="number" value="0" class="w-12 text-right text-[13px] text-gray-900 border-none outline-none bg-transparent">
+                    </div>
+                    <div class="flex items-center group">
+                        <span class="w-24 text-[13px] text-gray-600 leading-tight" data-i18n="adjust.contrast">Contrast</span>
+                        <button type="button" class="keyframe-button hidden w-6 h-6 flex-none rounded text-gray-400 hover:text-purple-600" data-keyframe-button="contrast" aria-label="Add or update keyframe" data-i18n-aria-label="animation.addKeyframe" data-i18n-title="animation.addKeyframe" aria-pressed="false"><i class="ph ph-diamond"></i></button>
+                        <div class="flex-1 px-2 relative flex items-center">
+                            <input type="range" min="-100" max="100" value="0" class="w-full" data-keyframe="contrast">
+                        </div>
+                        <input type="number" value="0" class="w-12 text-right text-[13px] text-gray-900 border-none outline-none bg-transparent">
+                    </div>
+                    <div class="flex items-center group">
+                        <span class="w-24 text-[13px] text-gray-600 leading-tight" data-i18n="adjust.midpoint">Midpoint</span>
+                        <button type="button" class="keyframe-button hidden w-6 h-6 flex-none rounded text-gray-400 hover:text-purple-600" data-keyframe-button="midpoint" aria-label="Add or update keyframe" data-i18n-aria-label="animation.addKeyframe" data-i18n-title="animation.addKeyframe" aria-pressed="false"><i class="ph ph-diamond"></i></button>
+                        <div class="flex-1 px-2 relative flex items-center">
+                            <input type="range" min="0" max="255" value="128" class="w-full" data-keyframe="midpoint">
+                        </div>
+                        <input type="number" value="128" class="w-12 text-right text-[13px] text-gray-900 border-none outline-none bg-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-[13px] font-semibold text-gray-900 mb-4" data-i18n="section.colors">Colors</h3>
+                
+                <div class="space-y-3 mb-5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[13px] text-gray-600" data-i18n="colors.ink">Ink</span>
+                        <div class="flex items-center gap-2">
+                            <div class="border border-gray-200 rounded px-2 py-1 flex items-center">
+                                <span class="text-[13px] text-gray-900 font-mono">#1d1d1f</span>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-[#1d1d1f] border border-gray-200 shadow-inner"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[13px] text-gray-600" data-i18n="colors.paper">Paper</span>
+                        <div class="flex items-center gap-2">
+                            <div class="border border-gray-200 rounded px-2 py-1 flex items-center">
+                                <span class="text-[13px] text-gray-900 font-mono">#ffffff</span>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-[#ffffff] border border-gray-200 shadow-inner"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-1">
+                        <span class="text-[13px] text-gray-600" data-i18n="colors.transparent">Transparent paper</span>
+                        <div>
+                            <input type="checkbox" id="transparent-toggle" class="hidden toggle-checkbox">
+                            <label for="transparent-toggle" class="toggle-label block"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="extra-color-rows" class="space-y-3 mb-4"></div>
+                <button id="add-color-button" type="button" class="w-full border border-dashed border-gray-300 text-gray-600 hover:border-gray-500 hover:text-gray-900 text-[13px] font-medium py-2 rounded-xl transition-colors" data-i18n="colors.add">+ Add color</button>
+
+                <form id="lospec-palette-form" class="mt-4 space-y-2">
+                    <label for="lospec-palette-input" class="sr-only" data-i18n="palette.lospecInput">Lospec palette URL or slug</label>
+                    <input id="lospec-palette-input" type="text" autocomplete="off" spellcheck="false" placeholder="Lospec palette URL or slug" data-i18n-placeholder="palette.lospecInput" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-[13px] text-gray-900 outline-none focus:border-blue-400">
+                    <a href="https://lospec.com/palette-list" target="_blank" rel="noopener noreferrer" class="block text-xs text-blue-600 hover:underline" data-i18n="palette.lospecBrowse">Browse palettes on Lospec</a>
+                    <button id="lospec-palette-load" type="submit" class="w-full border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 text-[13px] font-medium py-2 rounded-xl transition-colors" data-i18n="palette.lospecLoad">Load from Lospec</button>
+                    <span id="lospec-palette-status" class="block min-h-4 text-xs text-gray-500" role="status" aria-live="polite"></span>
+                </form>
+
+                <div class="grid grid-cols-6 gap-2" id="color-palette">
+                </div>
+            </div>
+
+            <div class="mb-6 border-t border-gray-100 pt-6">
+                <h3 class="text-[13px] font-semibold text-gray-900 mb-4" data-i18n="section.download">Download</h3>
+                
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-[13px] text-gray-600" data-i18n="download.upscale">Upscale</span>
+                    <div class="flex items-center gap-3">
+                        <select class="border border-gray-200 rounded text-[13px] py-1 px-2 pr-6 outline-none bg-white text-gray-900 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23111827%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[length:8px_8px] bg-[right_8px_center]">
+                            <option>1x</option>
+                            <option selected>2x</option>
+                            <option>4x</option>
+                            <option>8x</option>
+                        </select>
+                        <span class="text-[12px] text-gray-400">1800 × 1800</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <button class="w-full bg-[#1c1c1e] hover:bg-black text-white font-medium py-2.5 rounded-xl transition-colors text-sm" data-i18n="download.copyHtml">Copy HTML code</button>
+                    <div class="flex gap-2">
+                        <button class="flex-1 bg-white border border-gray-200 hover:bg-gray-50 text-gray-800 font-medium py-2.5 rounded-xl transition-colors text-sm" data-i18n="download.svg">Download SVG</button>
+                        <button class="flex-1 bg-white border border-gray-200 hover:bg-gray-50 text-gray-800 font-medium py-2.5 rounded-xl transition-colors text-sm" data-i18n="download.png">Download PNG</button>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <label for="gif-duration-seconds" class="text-[13px] text-gray-600" data-i18n="download.gifDuration">GIF duration (seconds)</label>
+                        <input id="gif-duration-seconds" type="number" min="0.1" max="15" step="0.1" value="15" required aria-describedby="gif-duration-hint" class="w-20 border border-gray-200 rounded-lg px-2 py-1 text-[13px] text-gray-900 bg-white">
+                    </div>
+                    <p id="gif-duration-hint" class="text-xs text-gray-400" data-i18n="download.gifDurationHint">Trim from the start; shorter animations keep their original length.</p>
+                    <button class="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-800 font-medium py-2.5 rounded-xl transition-colors text-sm" data-i18n="download.gif">Download GIF</button>
+                    <p class="text-xs text-gray-400" data-i18n="download.gifLimits">GIF exports: up to 15 seconds, 10 fps, 480 px wide.</p>
+                    <span id="gif-export-status" class="block min-h-4 text-xs text-gray-500" role="status" aria-live="polite"></span>
+                    <button class="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-800 font-medium py-2.5 rounded-xl transition-colors text-sm mt-2" data-i18n="download.clipboard">Copy to clipboard</button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-6 mt-6 border-t border-gray-100">
+                <span class="text-[13px] text-gray-600" data-i18n="settings.extendedPixel">Extended pixel size (max 100)</span>
+                <div>
+                    <input type="checkbox" id="pixel-range-toggle" class="hidden toggle-checkbox">
+                    <label for="pixel-range-toggle" class="toggle-label block"></label>
+                </div>
+            </div>
+            <div class="pt-6 mt-6 border-t border-gray-100">
+                <div class="flex items-center justify-between mb-2">
+                    <label for="palette-size-range" id="palette-size-label" class="text-[13px] text-gray-600" data-i18n="colors.maxSize">Maximum palette size</label>
+                    <output id="palette-size-value" class="text-[13px] text-gray-900 font-medium" for="palette-size-range"></output>
+                </div>
+                <input type="range" id="palette-size-range" min="3" max="5" step="1" value="3" class="w-full accent-blue-600" aria-labelledby="palette-size-label">
+                <div class="flex justify-between text-[11px] text-gray-400" aria-hidden="true">
+                    <span>8</span><span>16</span><span>32</span>
+                </div>
+            </div>
+            <button id="reset-settings-button" type="button" class="w-full mt-6 border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 text-[13px] font-medium py-2 rounded-xl transition-colors" data-i18n="settings.reset">Reset to defaults</button>
+
+        </div>
+    </aside>
+
+    <script src="./assets/animated-media.js"></script>
+    <script>
+        let selectedAlgorithm = 'Floyd';
+        let inkColor = '#1d1d1f';
+        let paperColor = '#ffffff';
+        let extraColors = [];
+        let maxPaletteSize = 8;
+        document.getElementById('upload-image-button').addEventListener('click', () => {
+            document.getElementById('image-file-input').click();
+        });
+
+        const algorithms = [
+            { name: 'Floyd', active: true, ditherClass: 'dither-floyd' },
+            { name: 'Atkinson', active: false, ditherClass: 'dither-atkinson' },
+            { name: 'Jarvis', active: false, ditherClass: 'dither-floyd' },
+            { name: 'Stucki', active: false, ditherClass: 'dither-atkinson' },
+            { name: 'Burkes', active: false, ditherClass: 'dither-floyd' },
+            { name: 'Sierra', active: false, ditherClass: 'dither-atkinson' },
+            { name: 'Sierra 2-row', active: false, ditherClass: 'dither-floyd' },
+            { name: 'Sierra lite', active: false, ditherClass: 'dither-atkinson' },
+            { name: 'Bayer 2×2', active: false, ditherClass: 'dither-bayer' },
+            { name: 'Bayer 4×4', active: false, ditherClass: 'dither-bayer' },
+            { name: 'Bayer 8×8', active: false, ditherClass: 'dither-bayer' },
+            { name: 'Bayer 16×16', active: false, ditherClass: 'dither-bayer' },
+            { name: 'Blue noise', active: false, ditherClass: 'dither-noise' },
+            { name: 'Halftone', active: false, ditherClass: 'dither-floyd' },
+            { name: 'Threshold', active: false, ditherClass: 'dither-noise' }
+        ];
+
+        const shapes = [
+            { id: 'pixel', label: 'Pixel', icon: '<rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/>', active: true }
+        ];
+
+        const palettes = [
+            ['#000000', '#ffffff'], ['#0033cc', '#ff3333'], ['#ff3300', '#ffffff'], ['#6600ff', '#ffffff'], ['#009999', '#ffffff'], ['#ff0066', '#ffffff'],
+            ['#ff6600', '#ffffff'], ['#ffcc00', '#ffffff'], ['#006633', '#ffffff'], ['#00ccff', '#ffffff'], ['#00cc66', '#ffffff'], ['#331a00', '#ffebcc'],
+            ['#ff0066', '#ffff00'], ['#ff00ff', '#66ffcc'], ['#9900ff', '#66ffff'], ['#0000ff', '#99ff33'], ['#003300', '#99cc00'], ['#00ff00', '#000000'],
+            ['#152238', '#f2a65a', '#fff2cc'], ['#182c25', '#6b9b74', '#e8d9b5'], ['#241e4e', '#a06cd5', '#f2c6de'],
+            ['#172a3a', '#3b8ea5', '#f5cda7', '#fff8e7'], ['#3b1f2b', '#a44200', '#d58936', '#f7e7ce'], ['#202c39', '#5d737e', '#a8c0bd', '#e9f0e4']
+        ];
+
+        const algoContainer = document.getElementById('algorithm-list');
+        algorithms.forEach(algo => {
+            const card = document.createElement('div');
+            card.className = `flex-shrink-0 snap-start flex flex-col items-center justify-between p-2 rounded-xl border w-[72px] h-[90px] cursor-pointer transition-all ${algo.active ? 'border-gray-900 bg-white shadow-sm' : 'border-gray-100 bg-white hover:border-gray-300'}`;
+            
+            card.innerHTML = `
+                <div class="w-12 h-10 mt-1 flex items-center justify-center relative overflow-hidden mask-leaf">
+                   <svg width="100%" height="100%" viewBox="0 0 100 100" class="absolute inset-0 z-10" fill="none" stroke="black" stroke-width="2">
+                       <path d="M50 80 C20 80 10 50 10 50 C10 50 30 20 60 20 C80 20 90 40 90 60 C90 80 60 80 50 80 Z" />
+                       <path d="M60 20 C60 10 70 10 80 15 C75 25 65 25 60 20 Z" fill="black" />
+                   </svg>
+                   <div class="absolute inset-0 w-full h-full ${algo.ditherClass} opacity-80" style="clip-path: path('M50 80 C20 80 10 50 10 50 C10 50 30 20 60 20 C80 20 90 40 90 60 C90 80 60 80 50 80 Z');"></div>
+                </div>
+                <span class="text-[11px] mt-1 text-center leading-tight ${algo.active ? 'font-bold text-gray-900' : 'text-gray-400 font-medium'}">${algo.name}</span>
+            `;
+            const nameKey = `algo.name.${algo.name}`;
+            if (nameKey in I18N.en) setI18nText(card.querySelector('span'), nameKey);
+            setI18nAttr(card, 'title', `algo.desc.${algo.name}`);
+            
+            card.onclick = () => {
+                selectedAlgorithm = algo.name;
+                scheduleDither();
+                algoContainer.querySelectorAll('div.border-gray-900').forEach(el => {
+                    el.classList.remove('border-gray-900', 'shadow-sm');
+                    el.classList.add('border-gray-100');
+                    el.querySelector('span').classList.remove('font-bold', 'text-gray-900');
+                    el.querySelector('span').classList.add('text-gray-400', 'font-medium');
+                });
+                card.classList.remove('border-gray-100');
+                card.classList.add('border-gray-900', 'shadow-sm');
+                card.querySelector('span').classList.remove('text-gray-400', 'font-medium');
+                card.querySelector('span').classList.add('font-bold', 'text-gray-900');
+            };
+            algoContainer.appendChild(card);
+        });
+
+        const paletteGrid = document.getElementById('color-palette');
+        function applyPalette(colors) {
+            inkColor = colors[0];
+            paperColor = colors[colors.length - 1];
+            extraColors = colors.slice(1, -1);
+            colorRows[0].text.value = inkColor;
+            colorRows[0].picker.value = inkColor;
+            colorRows[1].text.value = paperColor;
+            colorRows[1].picker.value = paperColor;
+            refreshExtraColorRows();
+            scheduleDither();
+        }
+        palettes.forEach(colors => {
+            const swatch = document.createElement('div');
+            swatch.className = 'w-10 h-5 rounded-md border border-gray-200 flex overflow-hidden cursor-pointer hover:shadow-md transition-shadow';
+            setI18nAttr(swatch, 'title', 'palette.title', { n: colors.length });
+            setI18nAttr(swatch, 'aria-label', 'palette.apply', { n: colors.length });
+            swatch.innerHTML = colors.map(color => `<div class="flex-1 min-w-0" style="background-color: ${color}"></div>`).join('');
+            swatch.onclick = () => applyPalette(colors);
+            paletteGrid.appendChild(swatch);
+        });
+
+        const container = document.getElementById('image-wrapper');
+        const previewViewport = document.getElementById('canvas-container');
+        const overlay = document.getElementById('split-overlay');
+        const divider = document.getElementById('divider');
+        const overlayCanvas = document.getElementById('overlay-canvas');
+        const overlayContext = overlayCanvas.getContext('2d');
+        const mediaPlayButton = document.getElementById('media-play-button');
+        
+        let isDragging = false;
+        let panX = 0;
+        let panY = 0;
+        let panDrag = null;
+
+        function updateOverlayImageWidth() {
+            if(container && overlayCanvas) {
+                overlayCanvas.style.width = container.offsetWidth + 'px';
+            }
+        }
+        function imageDimensions(image) {
+            return {
+                width: image.videoWidth || image.naturalWidth || image.width,
+                height: image.videoHeight || image.naturalHeight || image.height
+            };
+        }
+        function fitPreviewToImage() {
+            if (!sourceImage) return;
+            const { width, height } = imageDimensions(sourceImage);
+            const scale = Math.min(
+                previewViewport.clientWidth / width,
+                previewViewport.clientHeight / height
+            );
+            container.style.width = `${Math.max(1, Math.floor(width * scale))}px`;
+            container.style.height = `${Math.max(1, Math.floor(height * scale))}px`;
+        }
+        function disableSmoothing(ctx) {
+            ctx.imageSmoothingEnabled = false;
+            ctx.webkitImageSmoothingEnabled = false;
+            ctx.mozImageSmoothingEnabled = false;
+            ctx.msImageSmoothingEnabled = false;
+        }
+        window.addEventListener('resize', () => {
+            fitPreviewToImage();
+            updateOverlayImageWidth();
+        });
+        updateOverlayImageWidth();
+
+        function startDrag(e) {
+            isDragging = true;
+            document.body.style.cursor = 'ew-resize';
+        }
+
+        function endDrag() {
+            isDragging = false;
+            document.body.style.cursor = 'default';
+        }
+
+        function onDrag(e) {
+            if (!isDragging) return;
+            
+            let rect = container.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            
+            if (x < 0) x = 0;
+            if (x > rect.width) x = rect.width;
+            
+            let percentage = (x / rect.width) * 100;
+            
+            overlay.style.width = percentage + '%';
+            divider.style.left = percentage + '%';
+        }
+
+        divider.addEventListener('mousedown', startDrag);
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('mousemove', onDrag);
+
+        divider.addEventListener('touchstart', startDrag);
+        document.addEventListener('touchend', endDrag);
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            let touch = e.touches[0];
+            let rect = container.getBoundingClientRect();
+            let x = touch.clientX - rect.left;
+            if (x < 0) x = 0;
+            if (x > rect.width) x = rect.width;
+            let percentage = (x / rect.width) * 100;
+            overlay.style.width = percentage + '%';
+            divider.style.left = percentage + '%';
+        });
+
+        const rangeInputs = document.querySelectorAll('aside input[type="range"]:not(#palette-size-range)');
+        rangeInputs.forEach(range => {
+            const numberInput = range.parentElement.nextElementSibling;
+            numberInput.min = range.min;
+            numberInput.max = range.max;
+            numberInput.step = range.step || '1';
+            range.addEventListener('input', (e) => {
+                if (activeMedia && range.dataset.keyframe) pauseMediaPlayback();
+                numberInput.value = e.target.value;
+                if (activeMedia && range.dataset.keyframe && animationKeyframes[range.dataset.keyframe].length) {
+                    AnimatedMedia.upsertKeyframe(
+                        animationKeyframes[range.dataset.keyframe],
+                        timelineTimeMs,
+                        Number(e.target.value)
+                    );
+                    renderTimelineKeyframes();
+                    applyKeyframesAt(timelineTimeMs);
+                }
+                scheduleDither();
+            });
+            numberInput.addEventListener('input', (e) => {
+                if (e.target.value === '' || !Number.isFinite(e.target.valueAsNumber)) return;
+                if (activeMedia && range.dataset.keyframe) pauseMediaPlayback();
+                range.value = e.target.value;
+                numberInput.value = range.value;
+                if (activeMedia && range.dataset.keyframe && animationKeyframes[range.dataset.keyframe].length) {
+                    AnimatedMedia.upsertKeyframe(
+                        animationKeyframes[range.dataset.keyframe],
+                        timelineTimeMs,
+                        Number(range.value)
+                    );
+                    renderTimelineKeyframes();
+                    applyKeyframesAt(timelineTimeMs);
+                }
+                scheduleDither();
+            });
+        });
+
+        const ditherCanvas = document.getElementById('dither-canvas');
+        const ditherContext = ditherCanvas.getContext('2d');
+        const sourceCanvas = document.createElement('canvas');
+        const sourceContext = sourceCanvas.getContext('2d', { willReadFrequently: true });
+        const fileInput = document.getElementById('image-file-input');
+        const transparentToggle = document.getElementById('transparent-toggle');
+        const imageStatus = document.createElement('span');
+        imageStatus.setAttribute('role', 'status');
+        imageStatus.className = 'text-xs text-gray-500';
+        document.getElementById('upload-image-button').parentElement.appendChild(imageStatus);
+        let sourceImage = null;
+        let uploadedUrl = null;
+        let activeMedia = null;
+        let pendingMedia = null;
+        let mediaPlaybackTimer = null;
+        let mediaPaused = false;
+        let playbackVersion = 0;
+        let mediaSeekController = null;
+        let mediaSeekPromise = null;
+        let loadVersion = 0;
+        let renderFrame = null;
+        const timelinePanel = document.getElementById('animation-timeline');
+        const timelineSeek = document.getElementById('timeline-seek');
+        const timelineTimeLabel = document.getElementById('timeline-current-time');
+        const keyframeButtons = [...document.querySelectorAll('[data-keyframe-button]')];
+        const timelineTracks = {
+            pixelSize: document.getElementById('pixel-size-keyframes'),
+            brightness: document.getElementById('brightness-keyframes'),
+            contrast: document.getElementById('contrast-keyframes'),
+            midpoint: document.getElementById('midpoint-keyframes')
+        };
+        const animationKeyframes = { pixelSize: [], brightness: [], contrast: [], midpoint: [] };
+        const keyframeBaseValues = {};
+        let timelineTimeMs = 0;
+        const keyframeRanges = Object.fromEntries(
+            [...rangeInputs].filter(range => range.dataset.keyframe).map(range => [range.dataset.keyframe, range])
+        );
+
+        function formatTimelineTime(timeMs) {
+            const centiseconds = Math.floor(Math.max(0, timeMs) / 10) % 100;
+            const totalSeconds = Math.floor(Math.max(0, timeMs) / 1000);
+            const seconds = String(totalSeconds % 60).padStart(2, '0');
+            const minutes = Math.floor(totalSeconds / 60);
+            return `${minutes}:${seconds}.${String(centiseconds).padStart(2, '0')}`;
+        }
+
+        function applyKeyframesAt(timeMs) {
+            for (const name of Object.keys(animationKeyframes)) {
+                const frames = animationKeyframes[name];
+                if (!frames.length) continue;
+                const range = keyframeRanges[name];
+                const baseValue = keyframeBaseValues[name] ?? Number(range.value);
+                const value = Math.round(AnimatedMedia.getKeyframedValue(frames, timeMs, baseValue));
+                range.value = String(value);
+                range.parentElement.nextElementSibling.value = range.value;
+                keyframeButtons.find(button => button.dataset.keyframeButton === name)
+                    ?.setAttribute('aria-pressed', String(frames.some(frame => frame.time === Math.round(timeMs))));
+            }
+        }
+
+        document.getElementById('pixel-range-toggle').addEventListener('change', event => {
+            const range = keyframeRanges.pixelSize;
+            const numberInput = range.parentElement.nextElementSibling;
+            range.max = event.target.checked ? '100' : '10';
+            numberInput.max = range.max;
+            applyKeyframesAt(timelineTimeMs);
+            numberInput.value = range.value;
+            scheduleDither();
+        });
+
+        function renderTimelineKeyframes() {
+            if (!activeMedia) return;
+            const duration = activeMedia.duration;
+            const playheadPosition = duration ? timelineTimeMs / duration * 100 : 0;
+            for (const [name, track] of Object.entries(timelineTracks)) {
+                track.replaceChildren();
+                const playhead = document.createElement('span');
+                playhead.className = 'timeline-playhead';
+                playhead.style.left = `${playheadPosition}%`;
+                track.appendChild(playhead);
+                for (const frame of animationKeyframes[name]) {
+                    const marker = document.createElement('button');
+                    marker.type = 'button';
+                    marker.className = 'timeline-keyframe';
+                    marker.style.left = `${duration ? frame.time / duration * 100 : 0}%`;
+                    marker.title = `${t('animation.addKeyframe')} · ${formatTimelineTime(frame.time)}`;
+                    marker.setAttribute('aria-label', marker.title);
+                    marker.addEventListener('click', () => seekMediaTo(frame.time));
+                    track.appendChild(marker);
+                }
+            }
+        }
+
+        function updateTimelinePosition(timeMs) {
+            if (!activeMedia) return;
+            const duration = activeMedia.duration;
+            timelineTimeMs = AnimatedMedia.getTimelineTime(
+                timeMs, duration, activeMedia.kind === 'gif' && !mediaPaused
+            );
+            timelineSeek.max = String(Math.max(1, Math.floor(duration)));
+            timelineSeek.value = String(Math.round(timelineTimeMs));
+            setI18nText(timelineTimeLabel, 'animation.time', {
+                current: formatTimelineTime(timelineTimeMs),
+                duration: formatTimelineTime(duration)
+            });
+            for (const track of Object.values(timelineTracks)) {
+                const playhead = track.querySelector('.timeline-playhead');
+                if (playhead) playhead.style.left = `${duration ? timelineTimeMs / duration * 100 : 0}%`;
+            }
+            applyKeyframesAt(timelineTimeMs);
+        }
+
+        function recordKeyframe(name) {
+            if (!activeMedia) return;
+            const range = keyframeRanges[name];
+            pauseMediaPlayback();
+            if (keyframeBaseValues[name] === undefined) keyframeBaseValues[name] = Number(range.value);
+            AnimatedMedia.upsertKeyframe(animationKeyframes[name], timelineTimeMs, Number(range.value));
+            renderTimelineKeyframes();
+            applyKeyframesAt(timelineTimeMs);
+            scheduleDither();
+        }
+
+        function seekMediaTo(timeMs) {
+            if (!activeMedia) return;
+            pauseMediaPlayback();
+            const time = Math.max(0, Math.min(timeMs, activeMedia.duration));
+            updateTimelinePosition(time);
+            if (activeMedia.kind === 'gif') {
+                activeMedia.elapsedMs = time;
+                showMediaFrame(time);
+                return;
+            }
+            const video = activeMedia.video;
+            const seconds = Math.min(time / 1000, Math.max(0, (activeMedia.duration - 1) / 1000));
+            mediaSeekController?.abort();
+            const controller = new AbortController();
+            mediaSeekController = controller;
+            mediaSeekPromise = AnimatedMedia.seekVideoFrame(video, seconds, controller.signal)
+                .then(() => {
+                    if (activeMedia?.video === video && !controller.signal.aborted) showMediaFrame(time);
+                })
+                .catch(error => {
+                    if (controller.signal.aborted) return;
+                    pauseMediaPlayback();
+                    console.error('Timeline seeking failed:', error);
+                    updateTimelinePosition(video.currentTime * 1000);
+                    setI18nText(imageStatus, 'status.mediaLoadFailed');
+                    return false;
+                })
+                .finally(() => {
+                    if (mediaSeekController === controller) {
+                        mediaSeekController = null;
+                        mediaSeekPromise = null;
+                    }
+                });
+        }
+
+        keyframeButtons.forEach(button => {
+            button.addEventListener('click', () => recordKeyframe(button.dataset.keyframeButton));
+        });
+        timelineSeek.addEventListener('input', () => seekMediaTo(Number(timelineSeek.value)));
+
+        const diffusionKernels = {
+            Floyd: { divisor: 16, taps: [[1,0,7],[-1,1,3],[0,1,5],[1,1,1]] },
+            Atkinson: { divisor: 8, taps: [[1,0,1],[2,0,1],[-1,1,1],[0,1,1],[1,1,1],[0,2,1]] },
+            Jarvis: { divisor: 48, taps: [[1,0,7],[2,0,5],[-2,1,3],[-1,1,5],[0,1,7],[1,1,5],[2,1,3],[-2,2,1],[-1,2,3],[0,2,5],[1,2,3],[2,2,1]] },
+            Stucki: { divisor: 42, taps: [[1,0,8],[2,0,4],[-2,1,2],[-1,1,4],[0,1,8],[1,1,4],[2,1,2],[-2,2,1],[-1,2,2],[0,2,4],[1,2,2],[2,2,1]] },
+            Burkes: { divisor: 32, taps: [[1,0,8],[2,0,4],[-2,1,2],[-1,1,4],[0,1,8],[1,1,4],[2,1,2]] },
+            Sierra: { divisor: 32, taps: [[1,0,5],[2,0,3],[-2,1,2],[-1,1,4],[0,1,5],[1,1,4],[2,1,2],[-1,2,2],[0,2,3],[1,2,2]] },
+            'Sierra 2-row': { divisor: 16, taps: [[1,0,4],[2,0,3],[-2,1,1],[-1,1,2],[0,1,3],[1,1,2],[2,1,1]] },
+            'Sierra lite': { divisor: 4, taps: [[1,0,2],[-1,1,1],[0,1,1]] }
+        };
+
+        function bayerMatrix(size) {
+            let matrix = [[0]];
+            while (matrix.length < size) {
+                const n = matrix.length;
+                const next = Array.from({ length: n * 2 }, () => Array(n * 2));
+                for (let y = 0; y < n; y++) {
+                    for (let x = 0; x < n; x++) {
+                        const value = matrix[y][x] * 4;
+                        next[y][x] = value;
+                        next[y][x + n] = value + 2;
+                        next[y + n][x] = value + 3;
+                        next[y + n][x + n] = value + 1;
+                    }
+                }
+                matrix = next;
+            }
+            return matrix;
+        }
+
+        function blueNoiseMatrix(size) {
+            const cellCount = size * size;
+            const ranks = Array.from({ length: size }, () => Array(size).fill(-1));
+            const nearestDistance = new Float32Array(cellCount).fill(Infinity);
+            let selected = Math.floor(size / 2) * size + Math.floor(size / 2);
+
+            for (let rank = 0; rank < cellCount; rank++) {
+                const selectedX = selected % size;
+                const selectedY = Math.floor(selected / size);
+                ranks[selectedY][selectedX] = rank;
+                let farthestDistance = -1;
+                let next = -1;
+
+                for (let index = 0; index < cellCount; index++) {
+                    if (ranks[Math.floor(index / size)][index % size] !== -1) continue;
+                    const x = index % size;
+                    const y = Math.floor(index / size);
+                    const dx = Math.min(Math.abs(x - selectedX), size - Math.abs(x - selectedX));
+                    const dy = Math.min(Math.abs(y - selectedY), size - Math.abs(y - selectedY));
+                    const distance = dx * dx + dy * dy;
+                    nearestDistance[index] = Math.min(nearestDistance[index], distance);
+                    if (nearestDistance[index] > farthestDistance) {
+                        farthestDistance = nearestDistance[index];
+                        next = index;
+                    }
+                }
+                selected = next;
+            }
+            return ranks;
+        }
+
+        function halftoneMatrix(size) {
+            const center = (size - 1) / 2;
+            const cells = [];
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    cells.push({ x, y, distance: (x - center) ** 2 + (y - center) ** 2 });
+                }
+            }
+            cells.sort((a, b) => a.distance - b.distance || a.y - b.y || a.x - b.x);
+            const matrix = Array.from({ length: size }, () => Array(size));
+            cells.forEach((cell, rank) => {
+                matrix[cell.y][cell.x] = size * size - 1 - rank;
+            });
+            return matrix;
+        }
+
+        const orderedMatrices = {
+            'Bayer 2×2': bayerMatrix(2),
+            'Bayer 4×4': bayerMatrix(4),
+            'Bayer 8×8': bayerMatrix(8),
+            'Bayer 16×16': bayerMatrix(16),
+            'Blue noise': blueNoiseMatrix(64),
+            Halftone: halftoneMatrix(8)
+        };
+
+        function scheduleDither() {
+            if (renderFrame !== null) cancelAnimationFrame(renderFrame);
+            renderFrame = requestAnimationFrame(() => {
+                renderFrame = null;
+                if (!sourceImage) return;
+                try {
+                    renderDither();
+                    setI18nText(imageStatus, '');
+                } catch (error) {
+                    setI18nText(imageStatus, 'status.processFailed');
+                    console.error('Dithering failed:', error);
+                }
+            });
+        }
+
+        function renderDither() {
+            const pixelSize = Number(rangeInputs[0].value);
+            const brightness = Number(rangeInputs[1].value) * 2.55;
+            const contrast = Number(rangeInputs[2].value) * 2.55;
+            const midpoint = Number(rangeInputs[3].value);
+            const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+            const { width: imageWidth, height: imageHeight } = imageDimensions(sourceImage);
+            const width = Math.ceil(imageWidth / pixelSize);
+            const height = Math.ceil(imageHeight / pixelSize);
+            sourceCanvas.width = imageWidth;
+            sourceCanvas.height = imageHeight;
+            sourceContext.drawImage(sourceImage, 0, 0);
+            const pixels = sourceContext.getImageData(0, 0, imageWidth, imageHeight).data;
+            const luminance = new Float32Array(width * height);
+            const indexed = new Uint8Array(width * height);
+            for (let y = 0; y < height; y++) {
+                const top = y * pixelSize;
+                const bottom = Math.min(top + pixelSize, imageHeight);
+                for (let x = 0; x < width; x++) {
+                    const left = x * pixelSize;
+                    const right = Math.min(left + pixelSize, imageWidth);
+                    let sum = 0;
+                    for (let sy = top; sy < bottom; sy++) {
+                        for (let sx = left; sx < right; sx++) {
+                            const p = (sy * imageWidth + sx) * 4;
+                            const alpha = pixels[p + 3] / 255;
+                            sum += (0.2126 * pixels[p] + 0.7152 * pixels[p + 1] + 0.0722 * pixels[p + 2]) * alpha + 255 * (1 - alpha);
+                        }
+                    }
+                    const gray = sum / ((right - left) * (bottom - top));
+                    luminance[y * width + x] = Math.max(0, Math.min(255, factor * (gray - 128) + 128 + brightness));
+                }
+            }
+            const rgb = color => color.match(/[a-f\d]{2}/gi).map(value => parseInt(value, 16));
+            const colors = [inkColor, ...extraColors, paperColor].map(color => ({ hex: color, rgb: rgb(color) }));
+            const luminanceOf = color => 0.2126 * color.rgb[0] + 0.7152 * color.rgb[1] + 0.0722 * color.rgb[2];
+            colors.sort((a, b) => luminanceOf(a) - luminanceOf(b));
+            const levels = colors.map(luminanceOf);
+            const kernel = diffusionKernels[selectedAlgorithm];
+            const matrix = orderedMatrices[selectedAlgorithm];
+            for (let y = 0; y < height; y++) {
+                const direction = y % 2 === 0 ? 1 : -1;
+                for (let step = 0; step < width; step++) {
+                    const x = direction === 1 ? step : width - 1 - step;
+                    const index = y * width + x;
+                    let thresholdOffset = midpoint - 128;
+                    if (matrix) {
+                        const n = matrix.length;
+                        thresholdOffset += ((matrix[y % n][x % n] + 0.5) / (n * n) - 0.5) * 255;
+                    }
+                    let colorIndex = 0;
+                    while (colorIndex < levels.length - 1 && luminance[index] >= (levels[colorIndex] + levels[colorIndex + 1]) / 2 + thresholdOffset) colorIndex++;
+                    indexed[index] = colorIndex;
+                    const value = levels[colorIndex];
+                    if (kernel) {
+                        const error = luminance[index] - value;
+                        for (const [dx, dy, weight] of kernel.taps) {
+                            const nx = x + dx * direction;
+                            const ny = y + dy;
+                            if (nx >= 0 && nx < width && ny < height) {
+                                luminance[ny * width + nx] += error * weight / kernel.divisor;
+                            }
+                        }
+                    }
+                }
+            }
+            const cells = AnimatedMedia.getForegroundCells(indexed, width, colors, paperColor);
+            lastGrid = { w: imageWidth, h: imageHeight, size: pixelSize, cells };
+
+            ditherCanvas.width = imageWidth;
+            ditherCanvas.height = imageHeight;
+            disableSmoothing(ditherContext);
+            if (selectedShape === 'pixel') {
+                const output = ditherContext.createImageData(imageWidth, imageHeight);
+                const rgba = colors.map(color => new Uint8Array([
+                    ...color.rgb,
+                    color.hex === paperColor && transparentToggle.checked ? 0 : 255
+                ]));
+                if (pixelSize === 1) {
+                    for (let index = 0; index < indexed.length; index++) {
+                        const color = rgba[indexed[index]];
+                        const offset = index * 4;
+                        output.data[offset] = color[0];
+                        output.data[offset + 1] = color[1];
+                        output.data[offset + 2] = color[2];
+                        output.data[offset + 3] = color[3];
+                    }
+                } else {
+                    const colorRuns = rgba.map(color => {
+                        const run = new Uint8Array(pixelSize * 4);
+                        for (let offset = 0; offset < run.length; offset += 4) {
+                            run.set(color, offset);
+                        }
+                        return run;
+                    });
+                    for (let y = 0; y < imageHeight; y++) {
+                        const gridRow = Math.floor(y / pixelSize) * width;
+                        for (let x = 0; x < width; x++) {
+                            const left = x * pixelSize;
+                            const blockWidth = Math.min(pixelSize, imageWidth - left);
+                            const colorRun = colorRuns[indexed[gridRow + x]];
+                            const segment = blockWidth === pixelSize
+                                ? colorRun
+                                : colorRun.subarray(0, blockWidth * 4);
+                            output.data.set(segment, (y * imageWidth + left) * 4);
+                        }
+                    }
+                }
+                ditherContext.putImageData(output, 0, 0);
+            } else {
+                if (!transparentToggle.checked) {
+                    ditherContext.fillStyle = paperColor;
+                    ditherContext.fillRect(0, 0, imageWidth, imageHeight);
+                }
+                cells.forEach(([x, y, color]) => {
+                    ditherContext.fillStyle = color;
+                    ditherContext.strokeStyle = color;
+                    drawShape(ditherContext, x * pixelSize, y * pixelSize, pixelSize);
+                });
+            }
+            setI18nText(document.querySelector('header > div:last-child'), 'header.grid', { w: width, h: height });
+            updateUpscaleLabel();
+            applyZoom();
+        }
+
+        function stopActiveMedia() {
+            playbackVersion++;
+            mediaSeekController?.abort();
+            mediaSeekController = null;
+            mediaSeekPromise = null;
+            if (renderFrame !== null) cancelAnimationFrame(renderFrame);
+            renderFrame = null;
+            if (mediaPlaybackTimer !== null) clearInterval(mediaPlaybackTimer);
+            mediaPlaybackTimer = null;
+            if (pendingMedia?.video) {
+                pendingMedia.video.onloadeddata = null;
+                pendingMedia.video.onerror = null;
+                pendingMedia.video.pause();
+                pendingMedia.video.removeAttribute('src');
+                pendingMedia.video.load();
+                pendingMedia.video.remove();
+            }
+            if (pendingMedia?.url) URL.revokeObjectURL(pendingMedia.url);
+            pendingMedia = null;
+            if (activeMedia?.video) {
+                activeMedia.video.onerror = null;
+                activeMedia.video.pause();
+                activeMedia.video.removeAttribute('src');
+                activeMedia.video.load();
+                activeMedia.video.remove();
+            }
+            activeMedia = null;
+            mediaPaused = false;
+            mediaPlayButton.hidden = true;
+            mediaPlayButton.classList.add('hidden');
+            timelinePanel.hidden = true;
+            timelineTimeMs = 0;
+            timelineSeek.value = '0';
+            setI18nText(timelineTimeLabel, 'animation.time', {
+                current: formatTimelineTime(0),
+                duration: formatTimelineTime(0)
+            });
+            for (const name of Object.keys(animationKeyframes)) {
+                animationKeyframes[name].length = 0;
+                delete keyframeBaseValues[name];
+                keyframeButtons.find(button => button.dataset.keyframeButton === name)
+                    ?.setAttribute('aria-pressed', 'false');
+                timelineTracks[name].replaceChildren();
+            }
+            keyframeButtons.forEach(button => button.classList.add('hidden'));
+            sourceImage = null;
+            lastGrid = null;
+            overlayCanvas.classList.add('hidden');
+            if (uploadedUrl) URL.revokeObjectURL(uploadedUrl);
+            uploadedUrl = null;
+            applySplit();
+        }
+
+        function showMediaFrame(timeMs) {
+            if (!activeMedia) return;
+            updateTimelinePosition(timeMs);
+            if (activeMedia.kind === 'gif') {
+                activeMedia.composer.drawFrameAt(
+                    Math.min(timelineTimeMs, activeMedia.duration - 1), activeMedia.frameCanvas
+                );
+            } else {
+                const { video, frameCanvas } = activeMedia;
+                const context = frameCanvas.getContext('2d');
+                context.clearRect(0, 0, frameCanvas.width, frameCanvas.height);
+                context.drawImage(video, 0, 0, frameCanvas.width, frameCanvas.height);
+            }
+            sourceImage = activeMedia.frameCanvas;
+            overlayCanvas.width = sourceImage.width;
+            overlayCanvas.height = sourceImage.height;
+            overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+            overlayContext.drawImage(sourceImage, 0, 0);
+            overlayCanvas.classList.remove('hidden');
+            fitPreviewToImage();
+            updateOverlayImageWidth();
+            applySplit();
+            scheduleDither();
+        }
+
+        function pauseMediaPlayback() {
+            playbackVersion++;
+            if (!activeMedia || mediaPaused) return;
+            mediaPaused = true;
+            if (activeMedia.kind === 'gif') {
+                activeMedia.elapsedMs = timelineTimeMs;
+            } else {
+                activeMedia.video.pause();
+            }
+            if (mediaPlaybackTimer !== null) clearInterval(mediaPlaybackTimer);
+            mediaPlaybackTimer = null;
+            setI18nText(mediaPlayButton, 'header.play');
+        }
+
+        async function startMediaPlayback() {
+            if (!activeMedia) return;
+            const media = activeMedia;
+            const version = ++playbackVersion;
+            if (mediaPlaybackTimer !== null) clearInterval(mediaPlaybackTimer);
+            mediaPlaybackTimer = null;
+            mediaPaused = false;
+            setI18nText(mediaPlayButton, 'header.pause');
+            try {
+                if (mediaSeekPromise && await mediaSeekPromise === false) return;
+                if (activeMedia !== media || version !== playbackVersion) return;
+                if (media.kind === 'gif') {
+                    if (media.elapsedMs >= media.duration) media.elapsedMs = 0;
+                    media.startedAt = performance.now() - media.elapsedMs;
+                } else {
+                    await media.video.play();
+                    if (activeMedia !== media || version !== playbackVersion) return;
+                }
+            } catch (error) {
+                if (activeMedia === media && version === playbackVersion) {
+                    console.error('Video preview playback failed:', error);
+                    pauseMediaPlayback();
+                    setI18nText(imageStatus, 'status.playBlocked');
+                }
+                return;
+            }
+            showMediaFrame(activeMedia.kind === 'gif' ? activeMedia.elapsedMs : activeMedia.video.currentTime * 1000);
+            mediaPlaybackTimer = setInterval(() => {
+                if (!activeMedia || mediaPaused) return;
+                const time = activeMedia.kind === 'gif'
+                    ? performance.now() - activeMedia.startedAt
+                    : activeMedia.video.currentTime * 1000;
+                try {
+                    showMediaFrame(time);
+                } catch (error) {
+                    console.error('Animated preview frame failed:', error);
+                    pauseMediaPlayback();
+                    setI18nText(imageStatus, 'status.mediaLoadFailed');
+                }
+            }, 100);
+        }
+
+        mediaPlayButton.addEventListener('click', () => {
+            if (mediaPaused) startMediaPlayback();
+            else pauseMediaPlayback();
+        });
+
+        function activateMedia(media, url, version) {
+            if (version !== loadVersion) {
+                URL.revokeObjectURL(url);
+                return;
+            }
+            media.frameCanvas = document.createElement('canvas');
+            const dimensions = AnimatedMedia.getFrameDimensions(media.width, media.height);
+            media.frameCanvas.width = dimensions.width;
+            media.frameCanvas.height = dimensions.height;
+            activeMedia = media;
+            uploadedUrl = url;
+            sourceImage = media.frameCanvas;
+            panX = 0;
+            panY = 0;
+            mediaPlayButton.hidden = false;
+            mediaPlayButton.classList.remove('hidden');
+            timelinePanel.hidden = false;
+            keyframeButtons.forEach(button => button.classList.remove('hidden'));
+            timelineSeek.min = '0';
+            timelineSeek.max = String(Math.max(1, Math.floor(media.duration)));
+            timelineSeek.step = '1';
+            timelineTimeMs = 0;
+            renderTimelineKeyframes();
+            setI18nText(imageStatus, '');
+            setI18nText(mediaPlayButton, 'header.pause');
+            showMediaFrame(0);
+            if (media.kind === 'gif') {
+                media.elapsedMs = 0;
+            }
+            startMediaPlayback();
+        }
+
+        async function loadAnimatedGif(file) {
+            stopActiveMedia();
+            const version = ++loadVersion;
+            const url = URL.createObjectURL(file);
+            pendingMedia = { url };
+            setI18nText(imageStatus, 'status.loading');
+            try {
+                const gif = AnimatedMedia.decodeGif(await file.arrayBuffer());
+                if (version !== loadVersion) {
+                    return;
+                }
+                if (gif.frames.length === 1) {
+                    pendingMedia = null;
+                    loadBitmap(url, true);
+                    return;
+                }
+                pendingMedia = null;
+                activateMedia({
+                    kind: 'gif',
+                    width: gif.width,
+                    height: gif.height,
+                    duration: gif.duration,
+                    composer: AnimatedMedia.createGifComposer(gif)
+                }, url, version);
+            } catch (error) {
+                if (pendingMedia?.url === url) pendingMedia = null;
+                URL.revokeObjectURL(url);
+                if (version === loadVersion) {
+                    setI18nText(imageStatus, 'status.mediaLoadFailed');
+                    console.error('GIF decoding failed:', error);
+                }
+            }
+        }
+
+        function loadVideoFile(file) {
+            stopActiveMedia();
+            const version = ++loadVersion;
+            const url = URL.createObjectURL(file);
+            const video = document.createElement('video');
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.preload = 'auto';
+            video.setAttribute('aria-hidden', 'true');
+            video.style.cssText = 'position:fixed;left:-10000px;width:1px;height:1px;opacity:0;pointer-events:none;';
+            document.body.appendChild(video);
+            pendingMedia = { url, video };
+            setI18nText(imageStatus, 'status.loading');
+            video.onerror = () => {
+                if (pendingMedia?.url === url) pendingMedia = null;
+                video.remove();
+                URL.revokeObjectURL(url);
+                if (version === loadVersion) setI18nText(imageStatus, 'status.mediaUnsupported');
+            };
+            video.onloadeddata = () => {
+                if (version !== loadVersion) {
+                    video.remove();
+                    return;
+                }
+                const { videoWidth: width, videoHeight: height, duration } = video;
+                if (!width || !height || !Number.isFinite(duration) || duration <= 0) {
+                    pendingMedia = null;
+                    video.remove();
+                    URL.revokeObjectURL(url);
+                    setI18nText(imageStatus, 'status.mediaLoadFailed');
+                    return;
+                }
+                video.onloadeddata = null;
+                pendingMedia = null;
+                activateMedia({ kind: 'video', width, height, duration: duration * 1000, video }, url, version);
+            };
+            video.src = url;
+            video.load();
+        }
+
+        function loadBitmap(url, isUpload = false) {
+            stopActiveMedia();
+            const version = ++loadVersion;
+            setI18nText(imageStatus, 'status.loading');
+            const image = new Image();
+            image.onload = () => {
+                if (version !== loadVersion) {
+                    if (isUpload) URL.revokeObjectURL(url);
+                    return;
+                }
+                sourceImage = image;
+                panX = 0;
+                panY = 0;
+                fitPreviewToImage();
+                overlayCanvas.width = image.naturalWidth;
+                overlayCanvas.height = image.naturalHeight;
+                overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+                overlayContext.drawImage(image, 0, 0);
+                overlayCanvas.classList.remove('hidden');
+                uploadedUrl = isUpload ? url : null;
+                updateOverlayImageWidth();
+                applySplit();
+                scheduleDither();
+            };
+            image.onerror = () => {
+                if (isUpload) URL.revokeObjectURL(url);
+                if (version === loadVersion) setI18nText(imageStatus, 'status.loadFailed');
+            };
+            image.src = url;
+        }
+
+        fileInput.addEventListener('change', () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+            loadVersion++;
+            stopActiveMedia();
+            const isGif = file.type === 'image/gif' || /\.gif$/i.test(file.name);
+            const isVideo = file.type.startsWith('video/') || /\.(mp4|m4v|mov|webm|ogv)$/i.test(file.name);
+            if (isVideo) {
+                loadVideoFile(file);
+            } else if (isGif) {
+                loadAnimatedGif(file);
+            } else if (!file.type.startsWith('image/')) {
+                setI18nText(imageStatus, 'status.notImage');
+            } else {
+                loadBitmap(URL.createObjectURL(file), true);
+            }
+            fileInput.value = '';
+        });
+        transparentToggle.addEventListener('change', scheduleDither);
+
+        let compareOn = true;
+        overlayCanvas.className = 'absolute inset-0 !w-full h-full object-contain hidden';
+        container.insertBefore(overlayCanvas, ditherCanvas);
+        overlay.remove();
+        ditherCanvas.classList.add('absolute', 'inset-0');
+        function applySplit() {
+            const p = compareOn ? parseFloat(divider.style.left || '50') : 0;
+            ditherCanvas.style.clipPath = `inset(0 0 0 ${p}%)`;
+            divider.style.display = compareOn && sourceImage ? '' : 'none';
+            previewViewport.style.cursor = !compareOn && sourceImage ? 'grab' : '';
+        }
+        document.addEventListener('mousemove', () => { if (isDragging) applySplit(); });
+        document.addEventListener('touchmove', () => { if (isDragging) applySplit(); });
+        applySplit();
+
+        const headerControls = document.querySelector('header > div:first-child');
+        const [zoomOutBtn, zoomInBtn] = headerControls.querySelectorAll('div button');
+        const zoomLabel = headerControls.querySelector('div span');
+        const findBtn = (root, text) => [...root.querySelectorAll('button')].find(b => b.textContent.trim() === text);
+        let zoom = 1;
+        container.style.transition = 'none';
+        container.style.willChange = 'transform';
+        function fitScale() {
+            if (!sourceImage) return 1;
+            const { width, height } = imageDimensions(sourceImage);
+            return Math.min(previewViewport.clientWidth / width, previewViewport.clientHeight / height);
+        }
+        function applyZoom() {
+            zoom = Math.max(0.1, Math.min(zoom, 32));
+            container.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+            zoomLabel.textContent = Math.round(zoom * fitScale() * 100) + '%';
+        }
+        zoomInBtn.onclick = () => { zoom *= 1.25; applyZoom(); };
+        zoomOutBtn.onclick = () => { zoom /= 1.25; applyZoom(); };
+        findBtn(headerControls, 'Fit').onclick = () => { zoom = 1; panX = 0; panY = 0; applyZoom(); };
+        findBtn(headerControls, '1:1').onclick = () => { zoom = 1 / fitScale(); applyZoom(); };
+        window.addEventListener('resize', applyZoom);
+        const compareBtn = findBtn(headerControls, 'Compare');
+        compareBtn.setAttribute('aria-pressed', 'true');
+        compareBtn.onclick = () => {
+            compareOn = !compareOn;
+            compareBtn.setAttribute('aria-pressed', String(compareOn));
+            ['border-gray-900', 'bg-gray-900', 'hover:bg-gray-800', 'text-white'].forEach(c => compareBtn.classList.toggle(c, compareOn));
+            ['border-gray-200', 'bg-white', 'hover:bg-gray-50', 'text-gray-700'].forEach(c => compareBtn.classList.toggle(c, !compareOn));
+            applySplit();
+        };
+
+        previewViewport.addEventListener('pointerdown', event => {
+            if (compareOn || !sourceImage || event.button !== 0 || event.pointerType !== 'mouse') return;
+            event.preventDefault();
+            panDrag = { id: event.pointerId, x: event.clientX, y: event.clientY, panX, panY };
+            previewViewport.setPointerCapture(event.pointerId);
+            previewViewport.style.cursor = 'grabbing';
+        });
+        previewViewport.addEventListener('pointermove', event => {
+            if (!panDrag || panDrag.id !== event.pointerId || compareOn) return;
+            panX = panDrag.panX + event.clientX - panDrag.x;
+            panY = panDrag.panY + event.clientY - panDrag.y;
+            applyZoom();
+        });
+        function endPan(event) {
+            if (!panDrag || panDrag.id !== event.pointerId) return;
+            panDrag = null;
+            if (previewViewport.hasPointerCapture(event.pointerId)) {
+                previewViewport.releasePointerCapture(event.pointerId);
+            }
+            applySplit();
+        }
+        previewViewport.addEventListener('pointerup', endPan);
+        previewViewport.addEventListener('pointercancel', endPan);
+        previewViewport.addEventListener('lostpointercapture', endPan);
+
+        const scrollLeftBtn = document.getElementById('algorithm-scroll-left');
+        const scrollRightBtn = document.getElementById('algorithm-scroll-right');
+        const updateAlgorithmScrollButtons = () => {
+            const isVertical = window.matchMedia('(min-width: 769px)').matches;
+            const position = isVertical ? algoContainer.scrollTop : algoContainer.scrollLeft;
+            const maxScroll = isVertical
+                ? algoContainer.scrollHeight - algoContainer.clientHeight
+                : algoContainer.scrollWidth - algoContainer.clientWidth;
+            scrollLeftBtn.disabled = position <= 1;
+            scrollRightBtn.disabled = position >= maxScroll - 1;
+        };
+        const scrollAlgorithms = direction => {
+            const isVertical = window.matchMedia('(min-width: 769px)').matches;
+            algoContainer.scrollBy({
+                [isVertical ? 'top' : 'left']: direction * Math.max(240, (isVertical ? algoContainer.clientHeight : algoContainer.clientWidth) * 0.75),
+                behavior: 'smooth'
+            });
+        };
+        scrollLeftBtn.addEventListener('click', () => scrollAlgorithms(-1));
+        scrollRightBtn.addEventListener('click', () => scrollAlgorithms(1));
+        algoContainer.addEventListener('scroll', updateAlgorithmScrollButtons, { passive: true });
+        algoContainer.addEventListener('keydown', event => {
+            const isVertical = window.matchMedia('(min-width: 769px)').matches;
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || (isVertical && (event.key === 'ArrowUp' || event.key === 'ArrowDown'))) {
+                event.preventDefault();
+                scrollAlgorithms(isVertical ? (event.key === 'ArrowDown' ? 1 : -1) : (event.key === 'ArrowRight' ? 1 : -1));
+            }
+        });
+        algoContainer.addEventListener('wheel', event => {
+            const isVertical = window.matchMedia('(min-width: 769px)').matches;
+            if (isVertical && Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+                event.preventDefault();
+                algoContainer.scrollBy({ top: event.deltaX, behavior: 'auto' });
+            } else if (!isVertical && Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+                event.preventDefault();
+                algoContainer.scrollBy({ left: event.deltaY, behavior: 'auto' });
+            }
+        }, { passive: false });
+        window.addEventListener('resize', updateAlgorithmScrollButtons);
+        updateAlgorithmScrollButtons();
+
+        let selectedShape = 'pixel';
+        let lastGrid = null;
+        const shapePaths = Object.fromEntries(shapes.map(s => {
+            const m = s.icon.match(/ d="([^"]+)"/);
+            return [s.id, m ? new Path2D(m[1]) : null];
+        }));
+        function drawShape(ctx, x, y, s) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(s / 24, s / 24);
+            ctx.beginPath();
+            switch (selectedShape) {
+                case 'dot': ctx.arc(12, 12, 6, 0, Math.PI * 2); ctx.fill(); break;
+                case 'ring': ctx.lineWidth = 2; ctx.arc(12, 12, 5, 0, Math.PI * 2); ctx.stroke(); break;
+                case 'line': ctx.fillRect(4, 10, 16, 4); break;
+                case 'square': ctx.fillRect(6, 6, 12, 12); break;
+                default: if (shapePaths[selectedShape]) ctx.fill(shapePaths[selectedShape]);
+            }
+            ctx.restore();
+        }
+
+        const colorRows = [...document.querySelectorAll('aside span.font-mono')].map((label, i) => {
+            const swatchEl = label.parentElement.nextElementSibling;
+            const text = document.createElement('input');
+            text.type = 'text';
+            text.maxLength = 7;
+            text.spellcheck = false;
+            text.value = label.textContent;
+            setI18nAttr(text, 'aria-label', i === 0 ? 'colors.inkHex' : 'colors.paperHex');
+            text.className = 'w-[72px] text-[13px] font-mono text-gray-900 outline-none bg-transparent';
+            label.replaceWith(text);
+            const picker = document.createElement('input');
+            picker.type = 'color';
+            picker.value = text.value;
+            setI18nAttr(picker, 'aria-label', i === 0 ? 'colors.inkPicker' : 'colors.paperPicker');
+            picker.className = 'w-8 h-8 rounded-lg border border-gray-200 cursor-pointer p-0 bg-transparent';
+            swatchEl.replaceWith(picker);
+            const set = v => {
+                if (i === 0) inkColor = v; else paperColor = v;
+                text.value = v;
+                picker.value = v;
+                scheduleDither();
+            };
+            text.addEventListener('input', () => { if (/^#[0-9a-f]{6}$/i.test(text.value)) set(text.value.toLowerCase()); });
+            text.addEventListener('blur', () => { text.value = i === 0 ? inkColor : paperColor; });
+            picker.addEventListener('input', () => set(picker.value));
+            return { text, picker };
+        });
+        const extraColorRows = document.getElementById('extra-color-rows');
+        const addColorButton = document.getElementById('add-color-button');
+        const paletteSizeRange = document.getElementById('palette-size-range');
+        const paletteSizeValue = document.getElementById('palette-size-value');
+        function updatePaletteSizeLabel() {
+            setI18nText(paletteSizeValue, 'colors.maxSizeValue', { n: maxPaletteSize });
+            setI18nAttr(paletteSizeRange, 'aria-valuetext', 'colors.maxSizeValue', { n: maxPaletteSize });
+        }
+        function updateAddColorAvailability() {
+            addColorButton.disabled = extraColors.length >= maxPaletteSize - 2;
+            addColorButton.classList.toggle('opacity-50', addColorButton.disabled);
+        }
+        function refreshExtraColorRows() {
+            extraColorRows.replaceChildren();
+            extraColors.forEach((color, index) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between';
+                const label = document.createElement('span');
+                label.className = 'text-[13px] text-gray-600';
+                setI18nText(label, 'colors.extra', { n: index + 1 });
+                const controls = document.createElement('div');
+                controls.className = 'flex items-center gap-2';
+                const picker = document.createElement('input');
+                picker.type = 'color';
+                picker.value = color;
+                setI18nAttr(picker, 'aria-label', 'colors.extraAria', { n: index + 1 });
+                picker.className = 'w-8 h-8 rounded-lg border border-gray-200 cursor-pointer p-0 bg-transparent';
+                picker.addEventListener('input', () => { extraColors[index] = picker.value; scheduleDither(); });
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                setI18nText(remove, 'colors.remove');
+                remove.className = 'text-xs text-gray-500 hover:text-red-600';
+                setI18nAttr(remove, 'aria-label', 'colors.removeAria', { n: index + 1 });
+                remove.addEventListener('click', () => { extraColors.splice(index, 1); refreshExtraColorRows(); scheduleDither(); });
+                controls.append(picker, remove);
+                row.append(label, controls);
+                extraColorRows.appendChild(row);
+            });
+            paletteSizeRange.min = String(Math.max(3, Math.ceil(Math.log2(extraColors.length + 2))));
+            updateAddColorAvailability();
+        }
+        paletteSizeRange.addEventListener('input', () => {
+            maxPaletteSize = 2 ** Number(paletteSizeRange.value);
+            updateAddColorAvailability();
+            updatePaletteSizeLabel();
+            scheduleDither();
+        });
+        addColorButton.addEventListener('click', () => {
+            if (extraColors.length >= maxPaletteSize - 2) return;
+            const defaultColors = ['#64748b', '#d97706', '#16a34a', '#2563eb', '#db2777', '#7c3aed', '#0891b2', '#ca8a04'];
+            extraColors.push(defaultColors[extraColors.length % defaultColors.length]);
+            refreshExtraColorRows();
+            scheduleDither();
+        });
+        refreshExtraColorRows();
+        updatePaletteSizeLabel();
+
+        const lospecPaletteForm = document.getElementById('lospec-palette-form');
+        const lospecPaletteInput = document.getElementById('lospec-palette-input');
+        const lospecPaletteLoad = document.getElementById('lospec-palette-load');
+        const lospecPaletteStatus = document.getElementById('lospec-palette-status');
+        function parseLospecSlug(value) {
+            const input = value.trim();
+            let slug;
+            if (/^lospec-palette:\/\//i.test(input)) {
+                slug = input.replace(/^lospec-palette:\/\//i, '');
+            } else if (/^(?:https?:\/\/|lospec\.com\/)/i.test(input)) {
+                try {
+                    const url = new URL(/^https?:\/\//i.test(input) ? input : `https://${input}`);
+                    if (url.hostname !== 'lospec.com' || !['http:', 'https:'].includes(url.protocol)) return null;
+                    const match = url.pathname.match(/^\/palette-list\/([a-z0-9-]+)(?:\.json)?\/?$/i);
+                    if (!match) return null;
+                    slug = match[1];
+                } catch (error) {
+                    return null;
+                }
+            } else {
+                slug = input.replace(/\.json$/i, '');
+            }
+            return /^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(slug) ? slug.toLowerCase() : null;
+        }
+        function addLospecPaletteSwatch(name, slug, colors) {
+            const swatch = document.createElement('button');
+            swatch.type = 'button';
+            swatch.className = 'w-10 h-5 rounded-md border border-gray-200 flex overflow-hidden cursor-pointer hover:shadow-md transition-shadow';
+            swatch.title = `${name} (${slug})`;
+            setI18nAttr(swatch, 'aria-label', 'palette.apply', { n: colors.length });
+            swatch.innerHTML = colors.map(color => `<span class="flex-1 min-w-0" style="background-color: ${color}"></span>`).join('');
+            swatch.addEventListener('click', () => applyPalette(colors));
+            paletteGrid.appendChild(swatch);
+        }
+        lospecPaletteForm.addEventListener('submit', async event => {
+            event.preventDefault();
+            const slug = parseLospecSlug(lospecPaletteInput.value);
+            if (!slug) {
+                setI18nText(lospecPaletteStatus, 'palette.lospecInvalidInput');
+                return;
+            }
+
+            lospecPaletteLoad.disabled = true;
+            setI18nText(lospecPaletteStatus, 'palette.lospecLoading');
+            try {
+                const response = await fetch(`https://lospec.com/palette-list/${encodeURIComponent(slug)}.json`);
+                if (response.status === 404) {
+                    setI18nText(lospecPaletteStatus, 'palette.lospecNotFound');
+                    return;
+                }
+                if (!response.ok) throw new Error(`Lospec request failed with status ${response.status}`);
+
+                let palette;
+                try {
+                    palette = await response.json();
+                } catch (error) {
+                    console.error('Could not parse Lospec palette response:', error);
+                    setI18nText(lospecPaletteStatus, 'palette.lospecInvalid');
+                    return;
+                }
+                if (!palette || !Array.isArray(palette.colors)
+                    || palette.colors.some(color => typeof color !== 'string' || !/^#?[0-9a-f]{6}$/i.test(color))) {
+                    setI18nText(lospecPaletteStatus, 'palette.lospecInvalid');
+                    return;
+                }
+                if (palette.colors.length < 2) {
+                    setI18nText(lospecPaletteStatus, 'palette.lospecInvalid');
+                    return;
+                }
+                if (palette.colors.length > 32) {
+                    setI18nText(lospecPaletteStatus, 'palette.lospecTooMany', { n: palette.colors.length });
+                    return;
+                }
+
+                const colors = palette.colors.map(color => `#${color.replace(/^#/, '').toLowerCase()}`);
+                const name = typeof palette.name === 'string' && palette.name.trim() ? palette.name.trim() : slug;
+                maxPaletteSize = Math.max(maxPaletteSize, 2 ** Math.ceil(Math.log2(colors.length)));
+                maxPaletteSize = Math.min(maxPaletteSize, 32);
+                paletteSizeRange.value = String(Math.log2(maxPaletteSize));
+                updatePaletteSizeLabel();
+                addLospecPaletteSwatch(name, slug, colors);
+                applyPalette(colors);
+                setI18nText(lospecPaletteStatus, 'palette.lospecLoaded', { name, n: colors.length });
+            } catch (error) {
+                console.error('Could not load Lospec palette:', error);
+                setI18nText(lospecPaletteStatus, 'palette.lospecFailed');
+            } finally {
+                lospecPaletteLoad.disabled = false;
+            }
+        });
+
+        const asideEl = document.querySelector('aside');
+        const upscaleSelect = asideEl.querySelector('select');
+        const upscaleLabel = upscaleSelect.nextElementSibling;
+        const getScale = () => (parseInt(upscaleSelect.value, 10) || 1) / ((lastGrid && lastGrid.size) || 1);
+        function updateUpscaleLabel() {
+            upscaleLabel.textContent = `${Math.round(ditherCanvas.width * getScale())} × ${Math.round(ditherCanvas.height * getScale())}`;
+        }
+        upscaleSelect.addEventListener('change', updateUpscaleLabel);
+
+        document.getElementById('reset-settings-button').addEventListener('click', () => {
+            algoContainer.firstElementChild.click();
+
+            const pixelRangeToggle = document.getElementById('pixel-range-toggle');
+            pixelRangeToggle.checked = false;
+            pixelRangeToggle.dispatchEvent(new Event('change'));
+            [1, 0, 0, 128].forEach((value, index) => {
+                rangeInputs[index].value = String(value);
+                rangeInputs[index].parentElement.nextElementSibling.value = String(value);
+            });
+            for (const name of Object.keys(animationKeyframes)) {
+                animationKeyframes[name].length = 0;
+                delete keyframeBaseValues[name];
+                keyframeButtons.find(button => button.dataset.keyframeButton === name)
+                    ?.setAttribute('aria-pressed', 'false');
+            }
+            if (activeMedia) renderTimelineKeyframes();
+
+            inkColor = '#1d1d1f';
+            paperColor = '#ffffff';
+            colorRows[0].text.value = inkColor;
+            colorRows[0].picker.value = inkColor;
+            colorRows[1].text.value = paperColor;
+            colorRows[1].picker.value = paperColor;
+            extraColors = [];
+            maxPaletteSize = 8;
+            paletteSizeRange.min = '3';
+            paletteSizeRange.value = '3';
+            refreshExtraColorRows();
+            updatePaletteSizeLabel();
+            transparentToggle.checked = false;
+
+            upscaleSelect.value = '2x';
+            updateUpscaleLabel();
+            gifDurationInput.value = gifDurationInput.defaultValue;
+
+            if (!compareOn) compareBtn.click();
+            divider.style.left = '50%';
+            applySplit();
+            zoom = 1;
+            panX = 0;
+            panY = 0;
+            applyZoom();
+
+            const themeSelector = document.getElementById('theme-selector');
+            themeSelector.value = 'bw';
+            themeSelector.dispatchEvent(new Event('change'));
+            setLanguage('en');
+
+            scheduleDither();
+        });
+
+        function downloadBlob(blob, name) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = name;
+            a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        }
+        function scaledCanvas() {
+            if (renderFrame !== null && sourceImage) {
+                cancelAnimationFrame(renderFrame);
+                renderFrame = null;
+                renderDither();
+            }
+            const scale = getScale();
+            const c = document.createElement('canvas');
+            c.width = Math.round(ditherCanvas.width * scale);
+            c.height = Math.round(ditherCanvas.height * scale);
+            const ctx = c.getContext('2d');
+            disableSmoothing(ctx);
+            ctx.scale(scale, scale);
+            if (!transparentToggle.checked) {
+                ctx.fillStyle = paperColor;
+                ctx.fillRect(0, 0, ditherCanvas.width, ditherCanvas.height);
+            }
+            ctx.fillStyle = inkColor;
+            ctx.strokeStyle = inkColor;
+            const { size, cells } = lastGrid;
+            cells.forEach(([x, y, color]) => {
+                ctx.fillStyle = color;
+                ctx.strokeStyle = color;
+                if (selectedShape === 'pixel') {
+                    ctx.fillRect(x * size, y * size, size, size);
+                } else {
+                    drawShape(ctx, x * size, y * size, size);
+                }
+            });
+            return c;
+        }
+        const copyHtmlBtn = findBtn(asideEl, 'Copy HTML code');
+        copyHtmlBtn.onclick = async () => {
+            if (!lastGrid) return;
+            copyHtmlBtn.disabled = true;
+            let fallbackInput = null;
+            try {
+                const canvas = scaledCanvas();
+                const html = `<img src="${canvas.toDataURL('image/png')}" alt="${t('download.imgAlt')}" width="${lastGrid.w}" height="${lastGrid.h}" style="max-width:100%;height:auto;" />`;
+                try {
+                    await navigator.clipboard.writeText(html);
+                } catch (error) {
+                    fallbackInput = document.createElement('textarea');
+                    fallbackInput.value = html;
+                    fallbackInput.style.cssText = 'position:fixed;left:-9999px;top:0;';
+                    document.body.appendChild(fallbackInput);
+                    fallbackInput.select();
+                    if (!document.execCommand('copy')) throw new Error('Copy failed');
+                }
+                setI18nText(copyHtmlBtn, 'download.htmlCopied');
+            } catch (error) {
+                setI18nText(copyHtmlBtn, 'download.copyFailed');
+            } finally {
+                if (fallbackInput) fallbackInput.remove();
+                copyHtmlBtn.focus();
+                setTimeout(() => {
+                    setI18nText(copyHtmlBtn, 'download.copyHtml');
+                    copyHtmlBtn.disabled = false;
+                }, 1500);
+            }
+        };
+        findBtn(asideEl, 'Download SVG').onclick = () => {
+            if (!lastGrid) return;
+            const { w, h, size, cells } = lastGrid;
+            const scale = getScale();
+            const isPixel = selectedShape === 'pixel';
+            const icon = shapes.find(s => s.id === selectedShape).icon;
+            const defs = isPixel ? '' : `<defs><symbol id="s" viewBox="0 0 24 24">${icon}</symbol></defs>`;
+            const bg = transparentToggle.checked ? '' : `<rect width="${w}" height="${h}" fill="${paperColor}"/>`;
+            const body = cells.map(([x, y, color]) => isPixel
+                ? `<rect x="${x * size}" y="${y * size}" width="${size}" height="${size}" fill="${color}"/>`
+                : `<use href="#s" x="${x * size}" y="${y * size}" width="${size}" height="${size}" fill="${color}" color="${color}"/>`).join('');
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w * scale}" height="${h * scale}" viewBox="0 0 ${w} ${h}" shape-rendering="${isPixel ? 'crispEdges' : 'geometricPrecision'}">${defs}${bg}${body}</svg>`;
+            downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), 'bitmap.svg');
+        };
+        findBtn(asideEl, 'Download PNG').onclick = () => {
+            if (!lastGrid) return;
+            scaledCanvas().toBlob(blob => {
+                if (blob) downloadBlob(blob, 'bitmap.png');
+            }, 'image/png');
+        };
+        const gifExportStatus = document.getElementById('gif-export-status');
+        const gifDownloadButton = findBtn(asideEl, 'Download GIF');
+        const gifDurationInput = document.getElementById('gif-duration-seconds');
+        let gifExporting = false;
+        function lockGifExportControls() {
+            const controls = [...document.querySelectorAll('button, input, select')];
+            const controlStates = controls.map(control => control.disabled);
+            controls.forEach(control => { control.disabled = true; });
+            const pointerTargets = [algoContainer, document.getElementById('color-palette')];
+            const pointerStates = pointerTargets.map(target => target.style.pointerEvents);
+            pointerTargets.forEach(target => { target.style.pointerEvents = 'none'; });
+            return () => {
+                controls.forEach((control, index) => { control.disabled = controlStates[index]; });
+                pointerTargets.forEach((target, index) => { target.style.pointerEvents = pointerStates[index]; });
+            };
+        }
+        function seekVideo(video, timeSeconds) {
+            return AnimatedMedia.seekVideoFrame(video, timeSeconds);
+        }
+        gifDownloadButton.addEventListener('click', async () => {
+            if (!sourceImage || gifExporting) return;
+            if (!gifDurationInput.reportValidity()) return;
+            gifExporting = true;
+            const unlockControls = lockGifExportControls();
+            const exportMedia = activeMedia;
+            const resumePlayback = exportMedia && !mediaPaused;
+            const savedTimeMs = timelineTimeMs;
+            let encoder = null;
+            try {
+                const duration = AnimatedMedia.getExportDuration(
+                    exportMedia ? exportMedia.duration : null,
+                    gifDurationInput.valueAsNumber
+                );
+                const frameCount = exportMedia ? AnimatedMedia.getExportFrameCount(duration) : 1;
+                if (exportMedia) pauseMediaPlayback();
+                if (mediaSeekPromise && await mediaSeekPromise === false) {
+                    throw new Error('Could not finish the timeline seek before export.');
+                }
+                if (renderFrame !== null) cancelAnimationFrame(renderFrame);
+                renderFrame = null;
+                const dimensions = imageDimensions(sourceImage);
+                const outputSize = AnimatedMedia.getFrameDimensions(dimensions.width, dimensions.height);
+                const outputCanvas = document.createElement('canvas');
+                outputCanvas.width = outputSize.width;
+                outputCanvas.height = outputSize.height;
+                const outputContext = outputCanvas.getContext('2d', { willReadFrequently: true });
+                if (!outputContext) throw new Error('Could not create the GIF export canvas.');
+                disableSmoothing(outputContext);
+
+                const colors = [inkColor, ...extraColors, paperColor];
+                const transparentIndex = transparentToggle.checked ? colors.length - 1 : -1;
+                const palette = colors.map((color, index) => {
+                    const rgb = color.match(/[a-f\d]{2}/gi).map(value => parseInt(value, 16));
+                    return [...rgb, index === transparentIndex ? 0 : 255];
+                });
+                encoder = AnimatedMedia.createGifEncoder(
+                    outputSize.width,
+                    outputSize.height,
+                    palette,
+                    transparentIndex
+                );
+
+                for (let index = 0; index < frameCount; index++) {
+                    const timeMs = index * (1000 / AnimatedMedia.MAX_GIF_FPS);
+                    if (exportMedia?.kind === 'gif') {
+                        exportMedia.composer.drawFrameAt(timeMs, exportMedia.frameCanvas);
+                        sourceImage = exportMedia.frameCanvas;
+                    } else if (exportMedia?.kind === 'video') {
+                        const lastFrameTime = Math.max(0, (exportMedia.duration - 1) / 1000);
+                        await seekVideo(exportMedia.video, Math.min(timeMs / 1000, lastFrameTime));
+                        sourceImage = exportMedia.frameCanvas;
+                        const videoContext = exportMedia.frameCanvas.getContext('2d');
+                        videoContext.clearRect(0, 0, exportMedia.frameCanvas.width, exportMedia.frameCanvas.height);
+                        videoContext.drawImage(exportMedia.video, 0, 0, exportMedia.frameCanvas.width, exportMedia.frameCanvas.height);
+                    }
+                    if (exportMedia) applyKeyframesAt(timeMs);
+                    renderDither();
+                    outputContext.clearRect(0, 0, outputCanvas.width, outputCanvas.height);
+                    outputContext.drawImage(ditherCanvas, 0, 0, outputCanvas.width, outputCanvas.height);
+                    encoder.writeFrame(
+                        outputContext.getImageData(0, 0, outputCanvas.width, outputCanvas.height).data,
+                        exportMedia ? 100 : duration
+                    );
+                    gifExportStatus.textContent = t('download.gifProgress', { current: index + 1, total: frameCount });
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                }
+
+                downloadBlob(new Blob([encoder.finish()], { type: 'image/gif' }), 'bitmap.gif');
+                gifExportStatus.textContent = t('download.gifReady');
+            } catch (error) {
+                console.error('GIF export failed:', error);
+                gifExportStatus.textContent = t('download.gifFailed');
+            } finally {
+                if (exportMedia && activeMedia === exportMedia) {
+                    try {
+                        if (exportMedia.kind === 'gif') {
+                            exportMedia.elapsedMs = savedTimeMs;
+                            showMediaFrame(savedTimeMs);
+                        } else {
+                            await seekVideo(exportMedia.video, Math.min(savedTimeMs / 1000, Math.max(0, (exportMedia.duration - 1) / 1000)));
+                            showMediaFrame(savedTimeMs);
+                        }
+                        if (resumePlayback) startMediaPlayback();
+                        else pauseMediaPlayback();
+                    } catch (error) {
+                        console.error('Could not restore the animated preview after export:', error);
+                        setI18nText(imageStatus, 'status.mediaLoadFailed');
+                    }
+                } else if (sourceImage) {
+                    scheduleDither();
+                }
+                unlockControls();
+                gifExporting = false;
+            }
+        });
+        const copyBtn = findBtn(asideEl, 'Copy to clipboard');
+        copyBtn.onclick = () => {
+            if (!lastGrid) return;
+            scaledCanvas().toBlob(async blob => {
+                try {
+                    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                    setI18nText(copyBtn, 'download.copied');
+                } catch (e) {
+                    setI18nText(copyBtn, 'download.copyFailed');
+                }
+                setTimeout(() => { setI18nText(copyBtn, 'download.clipboard'); }, 1500);
+            }, 'image/png');
+        };
+
+        loadBitmap('./example_image.jpg');
+
+    </script>
+</body>
+</html>

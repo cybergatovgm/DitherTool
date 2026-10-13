@@ -4,7 +4,7 @@ The tool runs in a web browser or as a desktop app built with [Tauri](https://v2
 
 The interface uses HTML, JavaScript, [Tailwind CSS](https://tailwindcss.com/), [Phosphor Icons](https://phosphoricons.com/), and the Inter font. The desktop wrapper uses Tauri and Rust.
 
-![Dither.tool preview](Media/1.png)
+![Dither.tool preview](Media/b.png)
 
 ## Use it in your browser
 
